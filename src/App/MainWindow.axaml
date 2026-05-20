@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:AiPhotoViewer.UI.ViewModels;assembly=AiPhotoViewer.UI"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="700"
+        x:Class="AiPhotoViewer.App.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1100" Height="700"
+        Title="AI Photo Viewer">
+
+    <!-- Phase 1 でメイン画面（フォルダツリー / サムネイルグリッド / 詳細ペイン /
+         自然言語検索バー / AI解析進捗）を実装する。現状はプレースホルダ。 -->
+    <DockPanel>
+        <TextBox DockPanel.Dock="Top" Margin="8"
+                 Watermark="自然言語で画像を検索（例: 夜の神社）"
+                 Text="{Binding SearchQuery}" />
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Opacity="0.6"
+                   Text="{Binding Greeting}" />
+    </DockPanel>
+</Window>

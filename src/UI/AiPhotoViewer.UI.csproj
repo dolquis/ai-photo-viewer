@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\AiPhotoViewer.Core.csproj" />
+    <ProjectReference Include="..\Infrastructure\AiPhotoViewer.Infrastructure.csproj" />
+    <ProjectReference Include="..\Database\AiPhotoViewer.Database.csproj" />
+    <ProjectReference Include="..\Imaging\AiPhotoViewer.Imaging.csproj" />
+    <ProjectReference Include="..\AI\AiPhotoViewer.AI.csproj" />
+    <ProjectReference Include="..\Jobs\AiPhotoViewer.Jobs.csproj" />
+    <ProjectReference Include="..\Search\AiPhotoViewer.Search.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
