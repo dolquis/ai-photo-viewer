@@ -1,0 +1,39 @@
+# .NET ビルド成果物
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# テスト・カバレッジ
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+*.trx
+
+# NuGet
+*.nupkg
+packages/
+
+# AIモデル本体（リポジトリには含めない。models/README.md の手順で取得）
+models/*
+!models/README.md
+
+# ローカルDB・キャッシュ・ログ
+*.db
+*.db-shm
+*.db-wal
+*.log
+thumbnails/
+
+# OS
+.DS_Store
+Thumbs.db
