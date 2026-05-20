@@ -19,7 +19,7 @@ public interface IImageRepository
 public interface IEmbeddingRepository
 {
     Task SaveAsync(ImageEmbedding embedding, CancellationToken ct = default);
-    Task<ImageEmbedding?> GetByImageIdAsync(long imageId, string modelName, CancellationToken ct = default);
+    Task<ImageEmbedding?> GetByImageIdAsync(long imageId, string modelName, string modelVersion, CancellationToken ct = default);
 }
 
 /// <summary>データベース初期化（スキーマ作成・マイグレーション）。</summary>
