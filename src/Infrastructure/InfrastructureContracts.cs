@@ -20,16 +20,22 @@ public enum LibraryFileChangeKind
 /// <summary>ファイル変更イベント。</summary>
 public sealed record LibraryFileChange(LibraryFileChangeKind Kind, string Path, string? OldPath);
 
-/// <summary>アプリ設定の読み書き。引継ぎ文書 9.6 設定画面の項目に対応。</summary>
+/// <summary>
+/// アプリ設定の読み書き。引継ぎ文書 9.6 設定画面の項目に対応。
+/// 設定画面 UI が具象型へダウンキャストせず値を変更できるよう、書き込み操作を公開する。
+/// </summary>
 public interface IAppSettings
 {
     IReadOnlyList<string> WatchedFolders { get; }
-    string ModelDirectory { get; }
-    bool BackgroundAnalysisEnabled { get; }
-    bool PauseOnBattery { get; }
-    bool FaceRecognitionEnabled { get; }
-    bool OcrEnabled { get; }
-    bool PrivacyCheckEnabled { get; }
+    string ModelDirectory { get; set; }
+    bool BackgroundAnalysisEnabled { get; set; }
+    bool PauseOnBattery { get; set; }
+    bool FaceRecognitionEnabled { get; set; }
+    bool OcrEnabled { get; set; }
+    bool PrivacyCheckEnabled { get; set; }
+
+    void AddWatchedFolder(string folderPath);
+    void RemoveWatchedFolder(string folderPath);
 
     Task SaveAsync(CancellationToken ct = default);
 }

@@ -12,6 +12,12 @@ public sealed record OcrResult
     /// <summary>テキスト領域の座標（JSON）。</summary>
     public string? BoundingBoxJson { get; init; }
 
+    /// <summary>生成に用いたモデル名。モデル更新時の再解析対象特定に用いる。</summary>
+    public required string ModelName { get; init; }
+
+    /// <summary>生成に用いたモデルのバージョン。</summary>
+    public required string ModelVersion { get; init; }
+
     public DateTimeOffset CreatedAt { get; init; }
 }
 
@@ -19,6 +25,13 @@ public sealed record OcrResult
 public sealed record QualityScore
 {
     public long ImageId { get; init; }
+
+    /// <summary>生成に用いたモデル名。モデル更新時の再解析対象特定に用いる。</summary>
+    public required string ModelName { get; init; }
+
+    /// <summary>生成に用いたモデルのバージョン。</summary>
+    public required string ModelVersion { get; init; }
+
     public double BlurScore { get; init; }
     public double NoiseScore { get; init; }
     public double ExposureScore { get; init; }
