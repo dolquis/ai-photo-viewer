@@ -11,10 +11,31 @@
 設計フェーズ。設計ドキュメントと .NET ソリューション雛形を整備済み。
 実装は `docs/roadmap.md` の Phase 0（技術検証）から着手する。
 
+## 開発フロー（Linear 連携）
+
+本リポジトリは **Linear を管制塔（control tower）**、**GitHub の `docs/` を真実の源** として開発する。
+作業の規約（ビルド/テスト・レイヤ依存・ブランチ/PR・PoC の扱い）は **[AGENTS.md](AGENTS.md)** に集約しているので、着手前に必ず読むこと。
+
+- Issue 単位で作業し、各 Issue の Linear ブランチ（`dolquis/dev-NN-...`）で開発する。
+- PR は本文に対象 Issue（`DEV-NN`）を必ずリンクし、最初はドラフトで作成する。
+- CI（`.github/workflows/ci.yml`）が `dotnet build` / `dotnet test` を検査する。
+
+### Phase（roadmap）↔ Stage（Linear）対応
+
+| roadmap.md | Linear | 内容 |
+|---|---|---|
+| Phase 0 | P0 Technical validation | 技術検証 PoC（`poc/`） |
+| Phase 1 | Stage 1 core viewer | 高速ビューワー + DB + サムネイル |
+| Phase 2 | Stage 2 search | 重複検知 + 類似画像検索 |
+| Phase 3 | Stage 3 language and tags | 自然言語検索 + 自動タグ |
+| Phase 4 | Stage 4 people grouping | 顔検出 + 人物グループ化（MVP 完成） |
+| Phase 5〜7 | （MVP 後） | OCR / 画質診断 / 補正・共有前チェック |
+
 ## ドキュメント
 
 | ファイル | 内容 |
 |---|---|
+| [AGENTS.md](AGENTS.md) | 開発・エージェント運用ガイド（Linear 連携 / ビルド / 規約） |
 | [docs/tech-selection.md](docs/tech-selection.md) | 技術選定レポート（UI / 言語 / 推論ランタイム / DB・ベクトル検索） |
 | [docs/mvp-spec.md](docs/mvp-spec.md) | MVP 仕様書（機能・画面・ユースケース・受け入れ条件） |
 | [docs/architecture.md](docs/architecture.md) | アプリケーション設計書（アーキテクチャ・DB・ジョブ・ログ） |
@@ -43,6 +64,7 @@ src/
   Search/         ベクトル索引・検索ファサード
 tests/
   AiPhotoViewer.Tests   ユニット/結合テスト
+poc/              Phase 0 技術検証コード（使い捨て・sln 非同梱。poc/README.md 参照）
 docs/             設計ドキュメント
 models/           AI モデル配置先（モデル本体は管理外。docs/model-management.md 参照）
 ```

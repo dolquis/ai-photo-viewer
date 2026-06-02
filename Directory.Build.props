@@ -1,0 +1,16 @@
+<Project>
+
+  <!--
+    ソリューション共通のビルド設定。各 csproj は必要に応じて上書き可能。
+    詳細な開発規約は AGENTS.md を参照。
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+
+</Project>
