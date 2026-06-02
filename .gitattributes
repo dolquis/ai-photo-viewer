@@ -1,0 +1,25 @@
+# 既定はテキストとして扱い、改行は LF に正規化（.editorconfig と一致）
+* text=auto eol=lf
+
+# 明示的にテキスト
+*.cs       text eol=lf
+*.csproj   text eol=lf
+*.sln      text eol=lf
+*.props    text eol=lf
+*.targets  text eol=lf
+*.axaml    text eol=lf
+*.xaml     text eol=lf
+*.xml      text eol=lf
+*.manifest text eol=lf
+*.json     text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.md       text eol=lf
+
+# バイナリ（差分・改行変換の対象外）
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.onnx binary
