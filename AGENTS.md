@@ -63,19 +63,19 @@ PR を出す前にローカルで build / test が通ることを確認する。
 
 ## 5. ラベル ↔ ディレクトリ対応
 
-`area_*` ラベルは `src/` のプロジェクトに対応する。担当領域はここで判断する。
+`area:*` ラベルは `src/` のプロジェクトに対応する。担当領域はここで判断する。
 
 | Linear ラベル | 主なディレクトリ / ファイル |
 |---|---|
-| `area_photo_ui` | `src/App/`, `src/UI/` |
-| `area_image_core` | `src/Imaging/`（サムネイル・知覚ハッシュ） |
-| `area_db` | `src/Database/`, `src/Core/Domain/` |
-| `area_ai_runtime` | `src/AI/`（ONNX / 実行プロバイダ） |
-| `area_search` | `src/Search/` |
-| `area_faces` | `src/AI/`（顔検出/特徴量）, `src/Core/Domain/Faces.cs` |
-| `area_jobs` | `src/Jobs/` |
-| `area_privacy` | 横断（`docs/privacy.md` 準拠） |
-| `area_base` | ソリューション / 基盤雛形 |
+| `area:photo-ui` | `src/App/`, `src/UI/` |
+| `area:image-core` | `src/Imaging/`（サムネイル・知覚ハッシュ） |
+| `area:db` | `src/Database/`, `src/Core/Domain/` |
+| `area:ai-runtime` | `src/AI/`（ONNX / 実行プロバイダ） |
+| `area:search` | `src/Search/` |
+| `area:faces` | `src/AI/`（顔検出/特徴量）, `src/Core/Domain/Faces.cs` |
+| `area:jobs` | `src/Jobs/` |
+| `area:privacy` | 横断（`docs/privacy.md` 準拠） |
+| `area:base` | ソリューション / 基盤雛形 |
 
 ---
 
