@@ -261,7 +261,7 @@ Delta として各 repo 個別に保持する文書（共有コアには入れ�
 - REPO: dolquis/ai-photo-viewer
 - REPO_LABEL: repo:ai-photo-viewer
 - CANONICAL_DOCS: AGENTS.md, README.md, docs/roadmap.md
-- AREA_LABELS: area:photo-ui, area:image-core, area:ai-runtime, area:db, area:search, area:faces, area:jobs, area:privacy
+- AREA_LABELS: area:photo-ui, area:image-core, area:ai-runtime, area:db, area:search, area:faces, area:jobs, area:privacy, area:base
 - STAGE_MAP:
   - P0 Technical validation
   - Stage 1 core viewer
