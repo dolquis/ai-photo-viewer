@@ -27,3 +27,4 @@
 - [ ] AI モデル本体・ローカル DB・キャッシュ・ログを commit していない
 - [ ] PoC は `poc/` 配下（使い捨て・`AiPhotoViewer.sln` 非同梱）／測定値を該当 doc に転記
 - [ ] `type:human-gate` の場合、人間の確認を依頼している
+- [ ] Codex Cloud 実行由来の PR の場合、実行許可コメントと Codex Run Record が対応 Issue にある（`docs/linear-conventions.md` §2.1 / §6）
