@@ -47,6 +47,8 @@ Layer               Thumbnail Cache / Vector Index / AI Model Runtime /
 - `UI` → `Core` および各機能層のインターフェースを参照（具象実装に非依存）。
 - `App` → `UI` / `Core` を参照し、DI で具象実装を結線する。
 
+DI の合成ルート（具象の登録場所・生存期間・解決経路）は `docs/di-composition.md` を参照。
+
 ## 3. データフロー
 
 ```text
