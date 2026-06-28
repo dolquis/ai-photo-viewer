@@ -57,7 +57,7 @@ PR を出す前にローカルで build / test が通ることを確認する。
 - `Core` は **他のどの層も参照しない**（純粋ドメイン）。
 - `Infrastructure` / `Database` / `Imaging` / `AI` / `Jobs` / `Search` → `Core` **のみ** 参照。
 - `UI` → `Core` と各機能層の **インターフェース** を参照（具象実装に依存しない）。
-- `App` → `UI` / `Core` を参照し、DI で具象を結線する。
+- `App` → `UI` / `Core` を参照し、DI で具象を結線する。`App` は合成ルート（composition root）として各機能層（`Infrastructure` / `Database` / `Imaging` / `AI` / `Jobs` / `Search`）の具象を登録するため、これらを参照してよい**唯一の例外**とする（依存方向の逆転を一点に閉じ込めるための意図的な例外。詳細は `docs/di-composition.md` §2）。
 - UI と AI 推論を密結合させない。新しい推論・検索機能は必ずインターフェース経由で追加する。
 
 ---
