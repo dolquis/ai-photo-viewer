@@ -68,9 +68,12 @@ ONNX Runtime / SQLite / HNSW）を、**具体的な NuGet パッケージ**へ�
 
 ### ライセンス上の判断点（要決定）
 
-`SixLabors.ImageSharp` はバージョンでライセンスが異なる。**v2.x は Apache-2.0（無償）**、
-**v3 以降は Six Labors Split License** で、OSS・小規模利用は無償だが
-**商用配布では有償ライセンスが必要になる場合がある**。
+`SixLabors.ImageSharp` はバージョンでライセンスが異なる。**v3 以降は Six Labors Split License**
+で、OSS・小規模利用は無償だが**商用配布では有償ライセンスが必要になる場合がある**。
+v2.x も「すべて Apache-2.0」ではない点に注意が必要で、**Apache-2.0 なのは 2.1.3 まで**であり、
+**以降の 2.1.x パッチ（例: 2.1.12）は Split License に再ライセンスされている**。
+したがって `2.*` や「最新 2.x」の固定では無償と断定できず、採用するパッチバージョンの
+ライセンスを個別に確認する必要がある。
 
 注意すべきは、サムネイルを `SkiaSharp` に切り替えても **ImageSharp 依存は消えない**点である。
 上で推奨した `CoenM.ImageSharp.ImageHash` は `SixLabors.ImageSharp`（`>= 2.1.3`）を
@@ -79,8 +82,10 @@ ONNX Runtime / SQLite / HNSW）を、**具体的な NuGet パッケージ**へ�
 
 整理すると、取り得る選択肢は次のとおり。
 
-- **ImageSharp を v2.x（Apache-2.0）に固定して受け入れる**：`CoenM.ImageSharp.ImageHash`
-  経由の ImageSharp を v2 系に解決すれば、商用配布でも有償ライセンスは不要。最も低コスト。
+- **ImageSharp を Apache-2.0 の正確なバージョン（2.1.3 等）に固定して受け入れる**：
+  `CoenM.ImageSharp.ImageHash` 経由の ImageSharp をその版に固定解決すれば、商用配布でも
+  有償ライセンスは不要。最も低コストだが、以降のセキュリティパッチを取り込めないトレードオフが
+  あるため、固定版のライセンスと脆弱性状況を確認したうえで採用する。
 - **ImageSharp を完全に排除する**：サムネイルも知覚ハッシュも SkiaSharp 上で実装し、
   pHash/dHash を自前実装する（`CoenM.ImageSharp.ImageHash` を使わない）。依存は減るが
   実装コストが増える。
@@ -225,8 +230,9 @@ HNSW か `sqlite-vec` を PoC-6 で比較して確定する。`IVectorIndex` を
 
 ## 11. ライセンス・成熟度の注意点（要判断）
 
-- **`SixLabors.ImageSharp`**：v2.x は Apache-2.0、v3 以降は Six Labors Split License で
-  商用配布時は有償ライセンスの要否を確認する。なお `CoenM.ImageSharp.ImageHash` が
+- **`SixLabors.ImageSharp`**：v3 以降は Six Labors Split License。v2.x も Apache-2.0 なのは
+  2.1.3 までで、以降の 2.1.x パッチ（例: 2.1.12）は Split License に再ライセンスされているため、
+  商用配布時は採用パッチ版のライセンス要否を確認する。なお `CoenM.ImageSharp.ImageHash` が
   ImageSharp（`>= 2.1.3`）を推移的依存に持つため、サムネイルを `SkiaSharp` にしても
   ImageSharp は依存グラフに残る。完全排除には知覚ハッシュも非 ImageSharp 実装にする必要が
   ある（詳細は §3 のライセンス節）。
