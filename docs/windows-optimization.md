@@ -136,6 +136,17 @@ NPU や GPU で効率よく動かすには、ONNX への変換時に量子化（
 Olive や Foundry の変換ツールで QDQ ONNX を生成し、EP ごとの適合を PoC-5 で計測する。
 解析結果には常にモデル名とバージョンを記録する方針（`docs/architecture.md` §8）は変えない。
 
+### 4.5 必要な NuGet パッケージとデプロイ形態
+
+`AI.Windows` で `ExecutionProviderCatalog` と ORT の API を使うには、パッケージ参照が要る。
+Windows ターゲットフレームワーク（`net8.0-windows10.0.x`）だけでは不足する。
+実装 Issue はこの参照とデプロイ形態を契約の一部として扱う。
+
+- **自己完結デプロイ**：`Microsoft.Windows.AI.MachineLearning`（TFM `net8.0-windows10.0.18362.0` 以上）を参照する。ランタイムを同梱でき、オフライン初回起動を確実にする。
+- **フレームワーク依存デプロイ**：`Microsoft.WindowsAppSDK.ML`（TFM `net8.0-windows10.0.17763.0` 以上）と Windows App SDK ランタイムを組み合わせる。配布は小さいが、ランタイムの事前準備を要する。
+- ORT の API（`Microsoft.ML.OnnxRuntime`）は .NET 8 以上で使える。.NET 6 では EP の導入はできるが ORT の API は使えない。
+- 配布サイズと初回起動の選択は §9.2 と整合させる。オフライン要件（AC-2）を優先するなら自己完結デプロイで CPU/DirectML を確実に同梱する。
+
 ---
 
 ## 5. 画像デコードとサムネイル生成
