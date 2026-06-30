@@ -95,15 +95,25 @@ ONNX Runtime / SQLite / HNSW）を、**具体的な NuGet パッケージ**へ�
 
 | パッケージ | 用途 | 対応する契約・PoC |
 |---|---|---|
-| `Microsoft.ML.OnnxRuntime` | CPU EP での推論 | `ExecutionProvider.Cpu` / PoC-5 |
-| `Microsoft.ML.OnnxRuntime.DirectML` | DirectML EP での推論 | `ExecutionProvider.DirectMl` |
+| `Microsoft.ML.OnnxRuntime` **または** `Microsoft.ML.OnnxRuntime.DirectML`（排他） | 推論ランタイム本体（CPU / DirectML） | `ExecutionProvider.Cpu` / `.DirectMl` / PoC-5 |
 | `Microsoft.ML.OnnxRuntime.Extensions` | テキスト前処理（CLIP トークナイザ等） | `IImageEmbeddingService.EmbedTextAsync` / PoC-8 |
 
-### 推奨: ONNX Runtime を基盤に EP を切替
+### 推奨: ネイティブパッケージは 1 つだけ選ぶ（CPU か DirectML）
 
-`docs/tech-selection.md` の方針どおり、`Microsoft.ML.OnnxRuntime`（CPU 既定）と
-`Microsoft.ML.OnnxRuntime.DirectML`（GPU 汎用）を `ExecutionProvider` の切替に対応づける。
-TensorRT / OpenVINO は後続フェーズの任意最適化とする。
+ONNX Runtime のネイティブパッケージは**排他**である。`Microsoft.ML.OnnxRuntime.DirectML`
+は **CPU EP を内包**しており、DirectML 版は CPU 版を置き換える。両方を同時に参照すると
+managed/native バイナリやプロバイダ DLL が混在し、DirectML プロバイダの読み込みが
+失敗しうる（バージョンも `Microsoft.ML.OnnxRuntime` 1.27.0 と
+`Microsoft.ML.OnnxRuntime.DirectML` 1.24.4 のようにずれている）。
+
+- **Windows（GPU 汎用を使う）**: `Microsoft.ML.OnnxRuntime.DirectML` のみを参照し、
+  CPU は内包の CPU EP にフォールバックする。
+- **CPU のみ / 非 Windows**: `Microsoft.ML.OnnxRuntime`（ベース）のみを参照する。
+- RID（ターゲット）ごとにどちらか一方を選ぶ。同一ビルドで両方を参照しない。
+  併用が避けられない場合はバージョンを厳密に一致させる。
+
+`ExecutionProvider` enum（Cpu / DirectMl）の切替は、選んだネイティブパッケージが提供する
+EP の範囲内でセッション生成時に指定する。TensorRT / OpenVINO は後続フェーズの任意最適化とする。
 
 自然言語検索（PoC-8）で CLIP 系のテキスト埋め込みを使う場合、`Microsoft.ML.Tokenizers`
 単体には現状 CLIP トークナイザが無いため、`Microsoft.ML.OnnxRuntime.Extensions` の
@@ -191,8 +201,8 @@ HNSW か `sqlite-vec` を PoC-6 で比較して確定する。`IVectorIndex` を
 4. 画像系（`SixLabors.ImageSharp` または `SkiaSharp` / `CoenM.ImageSharp.ImageHash` /
    `MetadataExtractor`）（PoC-2・PoC-4 / Phase 1）。
 5. `BenchmarkDotNet` + `NSubstitute`（Phase 0 の全 PoC の計測・検証）。
-6. ONNX Runtime 系（`Microsoft.ML.OnnxRuntime` / `.DirectML` /
-   `.OnnxRuntime.Extensions`）（PoC-5・PoC-8 / Phase 2 以降）。
+6. ONNX Runtime 系（`Microsoft.ML.OnnxRuntime` **または** `.DirectML` のいずれか一方 +
+   `Microsoft.ML.OnnxRuntime.Extensions`）（PoC-5・PoC-8 / Phase 2 以降）。
 7. ベクトル検索（PoC-6 の比較結果で確定）。
 
 ---
@@ -205,7 +215,7 @@ HNSW か `sqlite-vec` を PoC-6 で比較して確定する。`IVectorIndex` を
 | UI | `CommunityToolkit.Mvvm` | 推奨 |
 | Imaging | `SixLabors.ImageSharp`（または `SkiaSharp`） | 推奨・要ライセンス判断 |
 | Imaging | `CoenM.ImageSharp.ImageHash` / `MetadataExtractor` | 推奨 |
-| AI | `Microsoft.ML.OnnxRuntime` / `.DirectML` / `.OnnxRuntime.Extensions` | 推奨（Phase 2〜） |
+| AI | `Microsoft.ML.OnnxRuntime` **か** `.DirectML`（排他）+ `.OnnxRuntime.Extensions` | 推奨（Phase 2〜） |
 | Database | `Microsoft.Data.Sqlite`（+ `Dapper`） | 推奨 |
 | Search | 線形探索 → `sqlite-vec` / HNSW 系 | PoC-6 で確定 |
 | Jobs | （標準 `System.Threading.Channels`） | 追加不要 |
