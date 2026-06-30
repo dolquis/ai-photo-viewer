@@ -54,14 +54,14 @@ ONNX Runtime / SQLite / HNSW）を、**具体的な NuGet パッケージ**へ�
 | パッケージ | 用途 | 対応する契約・PoC |
 |---|---|---|
 | `SixLabors.ImageSharp`（または `SkiaSharp`） | デコード・リサイズ・前処理 | `IThumbnailGenerator` / PoC-2 |
-| `Coenm.ImageHash` | pHash / dHash / aHash | `IPerceptualHasher` / PoC-4 |
+| `CoenM.ImageSharp.ImageHash` | pHash / dHash / aHash | `IPerceptualHasher` / PoC-4 |
 | `MetadataExtractor` | EXIF（撮影日時・向き）読み取り | Metadata Reader（`architecture.md` 1章） |
 
 ### 推奨: マネージド画像ライブラリ + 知覚ハッシュ + メタデータ読取
 
 - サムネイル生成・推論前処理は `SixLabors.ImageSharp` が本命。`IThumbnailGenerator`
   および PoC-2 に直結する。
-- pHash/dHash は `Coenm.ImageHash` が ImageSharp 上で実装でき、`IPerceptualHasher` と
+- pHash/dHash は `CoenM.ImageSharp.ImageHash` が ImageSharp 上で実装でき、`IPerceptualHasher` と
   PoC-4 の重複検知に対応する。
 - EXIF 読み取りは `MetadataExtractor` が .NET の標準的な選択肢で、設計の
   「Metadata Reader」コンポーネントに対応する。
@@ -82,7 +82,7 @@ Avalonia が既に依存している `SkiaSharp` を流用すれば追加依存�
 |---|---|---|
 | `Microsoft.ML.OnnxRuntime` | CPU EP での推論 | `ExecutionProvider.Cpu` / PoC-5 |
 | `Microsoft.ML.OnnxRuntime.DirectML` | DirectML EP での推論 | `ExecutionProvider.DirectMl` |
-| `Microsoft.ML.OnnxRuntimeExtensions` | テキスト前処理（CLIP トークナイザ等） | `IImageEmbeddingService.EmbedTextAsync` / PoC-8 |
+| `Microsoft.ML.OnnxRuntime.Extensions` | テキスト前処理（CLIP トークナイザ等） | `IImageEmbeddingService.EmbedTextAsync` / PoC-8 |
 
 ### 推奨: ONNX Runtime を基盤に EP を切替
 
@@ -91,7 +91,7 @@ Avalonia が既に依存している `SkiaSharp` を流用すれば追加依存�
 TensorRT / OpenVINO は後続フェーズの任意最適化とする。
 
 自然言語検索（PoC-8）で CLIP 系のテキスト埋め込みを使う場合、`Microsoft.ML.Tokenizers`
-単体には現状 CLIP トークナイザが無いため、`Microsoft.ML.OnnxRuntimeExtensions` の
+単体には現状 CLIP トークナイザが無いため、`Microsoft.ML.OnnxRuntime.Extensions` の
 CLIP トークナイザを用いるのが現実的である。採用モデルは PoC-5 / PoC-8 の計測で確定する。
 
 ---
@@ -173,11 +173,11 @@ HNSW か `sqlite-vec` を PoC-6 で比較して確定する。`IVectorIndex` を
    （合成ルートの土台。これが無いと各層を結線できない）。
 2. `CommunityToolkit.Mvvm`（UI 着手の前提。Phase 1）。
 3. `Microsoft.Data.Sqlite`（+ `Dapper`）（PoC-3 / Phase 1）。
-4. 画像系（`SixLabors.ImageSharp` または `SkiaSharp` / `Coenm.ImageHash` /
+4. 画像系（`SixLabors.ImageSharp` または `SkiaSharp` / `CoenM.ImageSharp.ImageHash` /
    `MetadataExtractor`）（PoC-2・PoC-4 / Phase 1）。
 5. `BenchmarkDotNet` + `NSubstitute`（Phase 0 の全 PoC の計測・検証）。
 6. ONNX Runtime 系（`Microsoft.ML.OnnxRuntime` / `.DirectML` /
-   `.OnnxRuntimeExtensions`）（PoC-5・PoC-8 / Phase 2 以降）。
+   `.OnnxRuntime.Extensions`）（PoC-5・PoC-8 / Phase 2 以降）。
 7. ベクトル検索（PoC-6 の比較結果で確定）。
 
 ---
@@ -189,8 +189,8 @@ HNSW か `sqlite-vec` を PoC-6 で比較して確定する。`IVectorIndex` を
 | App（DI） | `Microsoft.Extensions.DependencyInjection` / `.Hosting` | 推奨・基盤 |
 | UI | `CommunityToolkit.Mvvm` | 推奨 |
 | Imaging | `SixLabors.ImageSharp`（または `SkiaSharp`） | 推奨・要ライセンス判断 |
-| Imaging | `Coenm.ImageHash` / `MetadataExtractor` | 推奨 |
-| AI | `Microsoft.ML.OnnxRuntime` / `.DirectML` / `.OnnxRuntimeExtensions` | 推奨（Phase 2〜） |
+| Imaging | `CoenM.ImageSharp.ImageHash` / `MetadataExtractor` | 推奨 |
+| AI | `Microsoft.ML.OnnxRuntime` / `.DirectML` / `.OnnxRuntime.Extensions` | 推奨（Phase 2〜） |
 | Database | `Microsoft.Data.Sqlite`（+ `Dapper`） | 推奨 |
 | Search | 線形探索 → `sqlite-vec` / HNSW 系 | PoC-6 で確定 |
 | Jobs | （標準 `System.Threading.Channels`） | 追加不要 |
