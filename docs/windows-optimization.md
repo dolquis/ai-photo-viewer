@@ -95,7 +95,7 @@ WinRT 型を使うプロジェクトは `net8.0-windows10.0.x` を持つ必要�
 Windows ML は Windows が保守する ONNX Runtime（ORT）であり、API は ORT と同一で、ハードウェアに応じて実行プロバイダ（EP）を動的に選ぶ。
 従来の DirectML は単独利用が保守モード（sustained engineering）に移り、新機能は Windows ML 経由の ORT デプロイへ移った。
 
-この変化は `docs/tech-selection.md` §3 の前提（ONNX Runtime + DirectML EP）の更新を要する。
+この変化に合わせて `docs/tech-selection.md` §3 の前提（ONNX Runtime + DirectML EP）も更新する（DirectML 前提から Windows ML 推奨へ）。
 推論基盤を ORT に置く判断は保ったまま、Windows 向けの既定経路を Windows ML に更新する。
 ただし `Core` から見た抽象（`IImageEmbeddingService` などの契約）は変わらない。
 
@@ -227,7 +227,8 @@ SQLite は据え置く（`docs/tech-selection.md` §4）。
 - **Win32 `GetSystemPowerStatus`**：`kernel32` の関数で、AC/DC の別、バッテリ残量、バッテリセーバーの状態を返す。CsWin32 で呼べ、WinRT 依存や Windows ターゲットをほぼ要しない軽量経路である。
 - **WinRT `PowerManager`**：`Windows.System.Power.PowerManager` は `EnergySaverStatus`（`Disabled`/`Off`/`On`）を提供する。`EnergySaverStatusChanged` や `PowerSourceKindChanged` などのイベントも備える。Windows App SDK には同等の `Microsoft.Windows.System.Power.PowerManager` がある。これらを購読して長時間ジョブを止め分けられる。
 
-電源状態は `Core` か `Infrastructure` のインターフェース（たとえば `IPowerStatusProvider`）として公開し、Windows 実装を `Infrastructure.Windows` に置く。
+電源状態は `Core` のインターフェース（たとえば `IPowerStatusProvider`）として公開し、Windows 実装を `Infrastructure.Windows` に置く。
+`Jobs` は `Core` のみを参照する規約（`AGENTS.md` §4）があるため、`Jobs` が購読する電源契約は `Core` に置く（`Infrastructure` 側に置くと `Jobs` から参照できず依存方向が破綻する）。
 `Jobs` はこのインターフェースを購読し、バッテリ駆動やバッテリセーバー時にワーカー数を絞り、ジョブ優先度（`docs/architecture.md` §5 の High/Normal/Low）を下げる。
 これにより `Jobs` は `net8.0` のまま電源対応を実現できる。
 
@@ -288,7 +289,7 @@ Windows 実装は、すべて既存の契約インターフェースの裏に入
 | `IImageEmbeddingService` ほか推論 | AI | Windows ML（ExecutionProviderCatalog）＋ORT | `AI.Windows` | CPU EP のみの ORT |
 | `IVectorIndex` | Search | 変更なし（移植可能） | `Search` | 線形探索/`sqlite-vec` |
 | `ILibraryWatcher` | Infrastructure | FileSystemWatcher（必要なら USN/Search） | `Infrastructure`（既定）/`Infrastructure.Windows`（拡張） | 同左 |
-| `IPowerStatusProvider`（新設） | Infrastructure | GetSystemPowerStatus / PowerManager | `Infrastructure.Windows` | 常時 AC 扱い |
+| `IPowerStatusProvider`（新設） | Core（`Jobs` が参照するため） | GetSystemPowerStatus / PowerManager | `Infrastructure.Windows` | 常時 AC 扱い |
 | `IJobQueue` | Jobs | 変更なし（電源 IF を購読） | `Jobs` | 同左 |
 
 加速の利用可否は、`docs/di-composition.md` §6 の能力問い合わせ（capability query）に反映する。
