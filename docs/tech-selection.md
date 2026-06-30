@@ -81,7 +81,7 @@
 
 - 共通基盤は ONNX Runtime とし、Windows 向けの配布経路として Windows ML（Windows が保守する ONNX Runtime）を採る。API は ORT と同一で、`ExecutionProviderCatalog` が EP の取得と登録を担う。
 - `ExecutionProvider`（CPU / DirectML / NPU）の抽象は維持する（雛形: `src/AI/Inference/ExecutionProvider.cs`）。Windows ML は EP を自動選択するため、この列挙は利用者の優先指定（上書き）として機能させる。
-- 既定は CPU EP（全環境で動作保証）。GPU 利用時は DirectML EP を選び、Intel/AMD/NVIDIA を問わず Windows GPU を汎用的に活用する。CPU と DirectML は Windows ML ランタイムに同梱される。
+- 既定は Windows ML による自動 EP 選択とし、NPU/GPU を優先して CPU へフォールバックする。これにより GPU/NPU の無い環境でも CPU で全機能が動作する（受け入れ条件 AC-8）。GPU は DirectML EP で Intel/AMD/NVIDIA を問わず活用し、CPU と DirectML は Windows ML ランタイムに同梱される。
 - NPU EP（QNN / OpenVINO など）は `ExecutionProviderCatalog` から取得するか、オフライン要件のため自前で同梱する（bring your own EPs）。TensorRT 系は後続フェーズの任意最適化扱い。
 - DirectML は単独利用が保守モード（sustained engineering）に移り、新機能は Windows ML 経由の ORT デプロイへ移った。Windows 特化の具体策は `docs/windows-optimization.md` を参照。
 
