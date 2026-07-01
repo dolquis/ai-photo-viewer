@@ -231,7 +231,8 @@ public interface ICapabilityQuery
 再評価後、`ICapabilityQuery.CapabilitiesChanged` を発火する。
 UI はこのイベントを購読し、コマンドの `CanExecute` を再評価する。
 イベントはバックグラウンドスレッドで発火し得るため、UI への反映は §5 のとおり ViewModel が `Dispatcher` を介して UI スレッドへ戻す。
-ジョブ側は投入時・実行前に同期問い合わせ（`GetStatus` / `IsAvailable`）でゲートするため、イベント購読を必須としない。
+ジョブ側は投入・実行前のゲートには同期問い合わせ（`GetStatus` / `IsAvailable`）を用いるため、ゲート目的ではイベント購読を要しない。
+ただし、いったんスキップした段の再キューには `CapabilitiesChanged` の購読が要る（§7.5）。
 
 ### 7.5 消費側の整合
 
@@ -242,12 +243,25 @@ UI とジョブは同一の `ICapabilityQuery` を参照する。
 
 両ゲートが同一契約を参照することで、背景ジョブがモデル未取得サービスを呼び出す事態を防ぐ（DEV-386 §6）。
 
+利用不可のためにスキップした段は、能力が後で利用可へ転じたときに再キューする。
+モデル未取得や機能無効のあいだに取り込んだ画像は、当該のモデル依存段（`Embedding` / `Tagging` / `FaceDetection` / `FaceEmbedding` 等）がスキップされ、`AnalysisStatus` が未解析のまま残る。
+ゲートだけでは、後からモデルを取得・有効化しても UI の `CanExecute` が更新されるにとどまり、既出の画像に解析ジョブが積まれず手動の再解析まで解析されない。
+これを避けるため、`CapabilitiesChanged` で能力が利用可へ転じた契機を購読する再キュー経路を設ける。
+再キューはジョブ層（またはアプリケーション層のコーディネータ）が担い、当該段が未解析の既出画像に対応ジョブを投入する。
+これは `architecture.md` §8 の「モデル変更時は該当解析を再キュー」および §4 の「解析済みならスキップ」と同じ場所・同じ冪等性の下で行う（重複や破損を生まない）。
+
 ### 7.6 実装配置とフォールバック登録
 
-契約は `Core` に置くが、既定実装は三つの入力を必要とする。
-すなわち (a) 設定（`IAppSettings`、`Infrastructure`）、(b) `ModelDirectory` 配下のモデル有無（ファイルシステム）、(c) 能力ごとに必要なモデルの識別である。
-レイヤ規約上、単一の下位層からはこの三つを同時に参照できない（`AI` は `Infrastructure` を参照せず、`Infrastructure` は `AI` を参照しない）。
+契約は `Core` に置くが、既定実装は四つの入力を必要とする。
+すなわち (a) 設定（`IAppSettings`、`Infrastructure`）、(b) `ModelDirectory` 配下のモデル有無（ファイルシステム）、(c) 能力ごとに必要なモデルの識別、(d) 実行プロバイダの利用可否（EP の `ReadyState`。`DeviceUnsupported` の判定に用い、`docs/windows-optimization.md` が本問い合わせ口に反映すると定める）である。
+レイヤ規約上、単一の下位層からはこれらを同時に参照できない（`AI` は `Infrastructure` を参照せず、`Infrastructure` は `AI` を参照しない）。
 したがって既定実装は `Infrastructure` に置き（`IAppSettings` とファイルシステムを参照）、能力 → 必要モデルの対応表（`Core` の型）は合成ルート（`App`）が注入する。
+
+(d) の実行プロバイダの利用可否は、`Infrastructure` からは判定できない。
+EP の `ReadyState` は AI/Windows の実行プロバイダカタログ（`ExecutionProviderCatalog`）に属する知識であり、`Infrastructure` がこれを参照するとレイヤ規約に反する。
+したがってプロバイダ状態も `Core` 形の入力（たとえばプロバイダ状態のスナップショット、または `Core` に置くプロバイダ状態プローブ IF）として表し、実行プロバイダカタログを参照できる合成ルート（`App`）が組み立てて注入する。
+既定実装はこの `Core` 形の入力から `DeviceUnsupported` を判定し、`AI`/`Windows` 層へ直接依存しない。
+強制 EP や非対応 EP の局面でも、この入力によりゲートが実行不能なサービスの呼び出しを止められる。
 
 (c) の対応表は、推論サービスを解決して得るのではなく、モデルマニフェスト/構成（`docs/model-management.md` のモデル定義）から静的に導く。
 AI サービスの `ModelDescriptor` を実体から読むと、可否判定のために保護対象そのもの（モデル/セッションを所有する高コストな Singleton。§4）を先に構築してしまい、モデル未取得時は `ICapabilityQuery` が `ModelNotFound` を返す前に構築が失敗し得る。
