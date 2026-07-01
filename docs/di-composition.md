@@ -140,14 +140,14 @@ UI（`Core` と各層 IF を参照）とジョブ（`Core` のみ参照）の双
 
 ### 7.2 粒度と識別
 
-能力の単位は「モデルの有無で可否が変わる解析機能」とする。
-`Jobs` 側が `AnalysisJobKind` → `AnalysisCapability` の対応を持ち（`Jobs` は `Core` を参照するため対応表を `Jobs` に置ける）、モデル非依存の段は能力を持たず常に利用可とする。
-UI 側はコマンド → `AnalysisCapability` の対応を持つ。
+能力の単位は「モデルの有無で可否が変わる推論機能」とする。
+鍵は §4 で Singleton 登録するモデル依存サービス（`IImageEmbeddingService` / `ITaggingService` / `IFaceDetectionService` / `IFaceRecognitionService` / `IOcrService` / `IQualityAssessmentService` / `IUpscaleService` / `IDenoiseService`）を漏れなく覆う。
+一部を欠くと、その UI コマンドが束ねる鍵を持たず、モデル未取得時に場当たりの例外/null 処理へ後退してしまう（§6 の「無効化サービスに結果を捏造させない」方針に反する）。
 
 ```csharp
 namespace AiPhotoViewer.Core.Capabilities;
 
-/// <summary>モデルの有無で可否が変わる解析機能。能力問い合わせの鍵。</summary>
+/// <summary>モデルの有無で可否が変わる推論機能。能力問い合わせの鍵。</summary>
 public enum AnalysisCapability
 {
     Embedding,          // 画像埋め込み（自然言語検索・類似検索の基盤）
@@ -156,8 +156,17 @@ public enum AnalysisCapability
     FaceEmbedding,      // 顔特徴量
     Ocr,                // OCR（MVP後）
     QualityAssessment,  // 画質診断（MVP後）
+    Upscale,            // アップスケール（MVP後・補正機能）
+    Denoise,            // ノイズ除去（MVP後・補正機能）
 }
 ```
+
+鍵と消費側の対応づけは二通りある。
+
+- 解析パイプラインの段（`Embedding` / `Tagging` / `FaceDetection` / `FaceEmbedding` / `Ocr` / `QualityAssessment`）は、`Jobs` 側が `AnalysisJobKind` → `AnalysisCapability` の対応表を持って背景ジョブをゲートする（`Jobs` は `Core` を参照するため対応表を `Jobs` に置ける）。モデル非依存の段（`Metadata` / `Thumbnail` / `FileHash` / `PerceptualHash`）は能力を持たず常に利用可とする。
+- 補正機能（`Upscale` / `Denoise`）は解析パイプラインの段ではなく、`AnalysisJobKind` に対応を持たない。これらはユーザー操作で都度実行する非破壊処理であり、UI コマンドが直接この鍵で可否をゲートする。
+
+いずれの場合も UI 側はコマンド → `AnalysisCapability` の対応を持つ。
 
 ### 7.3 戻り値の形
 
