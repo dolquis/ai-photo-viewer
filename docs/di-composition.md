@@ -119,9 +119,124 @@ ViewModel は具象型へダウンキャストせず、`IServiceProvider` を直
 - 解析パイプラインも同じ問い合わせ口を参照する。AI 解析はフォルダ取り込みや再解析で背景実行されるため（`architecture.md` §4、`mvp-spec.md` UC-1 / フロー A）、ゲートを UI コマンドだけに束ねると背景ジョブからモデル未取得サービスを呼び出してしまう。`IJobQueue` への投入とジョブ実行の前段でモデル依存ジョブ（`Embedding` / `Tagging` / `FaceDetection` / `FaceEmbedding` 等）の可否を確認し、利用不可の段はキュー投入せずスキップする。これは「解析済みならスキップ」する段階制御（`architecture.md` §4）と同じ場所に置く。
 - フォールバック登録が必要な場合でも、捏造した解析結果を返さない。やむをえず登録する場合は、境界（ジョブ層）で扱える定義済みの「利用不可」例外を投げる形に限り、`architecture.md` §9 のエラー処理方針（境界でのみ捕捉）に従う。プレースホルダ値の永続化は禁じる。
 
-能力問い合わせ口の具体形（契約 IF の置き場所と戻り値）は §7 の未決事項とし、本書では「無効化は UI コマンドとジョブパイプラインの双方を同じ問い合わせ口でゲートし、無効化サービスに結果を捏造させない」という方針までを確定する。
+能力問い合わせ口の具体形（契約 IF の置き場所・鍵・戻り値・更新契機）は §7 で確定する（DEV-388）。本節では「無効化は UI コマンドとジョブパイプラインの双方を同じ問い合わせ口でゲートし、無効化サービスに結果を捏造させない」という方針までを確定する。
 
-## 7. P0 段階の扱いと未決事項
+## 7. 能力問い合わせ口（capability query）の契約
+
+§6 で確定した「呼び出し前のゲート」を成立させる契約を、本節で確定する（DEV-388）。
+UI コマンドの可否とジョブパイプラインの投入/実行前ゲートが、同一の問い合わせ口を参照する。
+以下は設計の確定であり、コード化は後続の実装 Issue（`agent:codex-impl`）に委ねる。
+本節のコード断片は契約の形を示す参考であり、`src/` への追加ではない。
+
+### 7.1 契約の置き場所
+
+能力問い合わせ口 `ICapabilityQuery` と、その鍵・戻り値の型は `Core` に置く。
+UI（`Core` と各層 IF を参照）とジョブ（`Core` のみ参照）の双方が同一契約を参照できるのは、両者が共通して参照する `Core` に契約がある場合に限られる。
+`Core` は他層を参照しない制約（`AGENTS.md` §4）を満たすため、鍵・戻り値も `Core` 内で完結する型で定義する。
+
+鍵に既存の `AnalysisJobKind`（`AiPhotoViewer.Jobs`）を直接用いない。
+`Core` は `Jobs` を参照できず、また `AnalysisJobKind` はモデル非依存の段（`Metadata` / `Thumbnail` / `FileHash` / `PerceptualHash`）を含むため、能力の鍵としては粒度が合わない。
+モデル依存機能だけを列挙する `Core` の列挙 `AnalysisCapability` を新設し、これを鍵とする。
+
+### 7.2 粒度と識別
+
+能力の単位は「モデルの有無で可否が変わる解析機能」とする。
+`Jobs` 側が `AnalysisJobKind` → `AnalysisCapability` の対応を持ち（`Jobs` は `Core` を参照するため対応表を `Jobs` に置ける）、モデル非依存の段は能力を持たず常に利用可とする。
+UI 側はコマンド → `AnalysisCapability` の対応を持つ。
+
+```csharp
+namespace AiPhotoViewer.Core.Capabilities;
+
+/// <summary>モデルの有無で可否が変わる解析機能。能力問い合わせの鍵。</summary>
+public enum AnalysisCapability
+{
+    Embedding,          // 画像埋め込み（自然言語検索・類似検索の基盤）
+    Tagging,            // 自動タグ
+    FaceDetection,      // 顔検出
+    FaceEmbedding,      // 顔特徴量
+    Ocr,                // OCR（MVP後）
+    QualityAssessment,  // 画質診断（MVP後）
+}
+```
+
+### 7.3 戻り値の形
+
+単純な可否ではなく、利用不可の理由を含める。
+理由が無いと UI は「なぜ押せないか」を説明できず、ジョブ側もスキップ理由をログに残せない（`architecture.md` §9 は想定内ケースの握り潰しを禁じる）。
+
+```csharp
+namespace AiPhotoViewer.Core.Capabilities;
+
+/// <summary>機能が利用できない理由。</summary>
+public enum CapabilityUnavailableReason
+{
+    ModelNotFound,      // ModelDirectory 配下にモデルが無い
+    DisabledBySetting,  // 設定で無効化されている（例: OcrEnabled=false）
+    DeviceUnsupported,  // 実行プロバイダ/デバイスが未対応
+    NotImplemented,     // MVP後フェーズで未提供
+}
+
+/// <summary>機能の利用可否と、不可の理由・解決見込みモデルの識別。</summary>
+public sealed record CapabilityStatus(
+    bool IsAvailable,
+    CapabilityUnavailableReason? Reason = null,
+    string? ModelName = null,
+    string? ModelVersion = null);
+
+/// <summary>機能ごとの利用可否を返す問い合わせ口。UI とジョブが共通で参照する。</summary>
+public interface ICapabilityQuery
+{
+    CapabilityStatus GetStatus(AnalysisCapability capability);
+    bool IsAvailable(AnalysisCapability capability);
+
+    /// <summary>可否が変化したことの通知（設定変更・モデル取得/削除）。</summary>
+    event EventHandler? CapabilitiesChanged;
+}
+```
+
+`ModelDescriptor` との関係を次のとおり定める。
+`ModelDescriptor`（`AiPhotoViewer.AI.Inference`）は AI 層の型であり、`Core` は AI を参照できないため `CapabilityStatus` に直接は持たせない。
+利用可能時にどのモデルで解決するかを UI へ示す必要がある場合は、`Core` の素の文字列 `ModelName` / `ModelVersion` で表す。
+これは `OcrResult` / `QualityScore`（`Core`）が既にモデル識別を `ModelName` / `ModelVersion` の文字列で保持しているのと同じ方針である。
+`ModelDescriptor` を `Core` へ移して単一の型に統一する案は、契約の成立に必須ではないため実装 Issue の検討事項とする。
+
+### 7.4 更新契機と通知
+
+可否は次の契機で再評価する。
+
+- `IAppSettings.ModelDirectory` の変更、および同ディレクトリ配下のモデルファイルの取得・削除。
+- 機能トグルの変更（`FaceRecognitionEnabled` / `OcrEnabled` / `PrivacyCheckEnabled` / `BackgroundAnalysisEnabled`）。
+
+再評価後、`ICapabilityQuery.CapabilitiesChanged` を発火する。
+UI はこのイベントを購読し、コマンドの `CanExecute` を再評価する。
+イベントはバックグラウンドスレッドで発火し得るため、UI への反映は §5 のとおり ViewModel が `Dispatcher` を介して UI スレッドへ戻す。
+ジョブ側は投入時・実行前に同期問い合わせ（`GetStatus` / `IsAvailable`）でゲートするため、イベント購読を必須としない。
+
+### 7.5 消費側の整合
+
+UI とジョブは同一の `ICapabilityQuery` を参照する。
+
+- UI: コマンドの `CanExecute` を `IsAvailable(capability)` に束ねる。利用不可の機能はメニュー/ボタンを無効表示にし、そもそも呼び出さない。
+- ジョブ: `IJobQueue` への投入前とジョブ実行前の双方で、対象 `AnalysisJobKind` を `AnalysisCapability` に写して可否を確認する。利用不可の段はキュー投入せずスキップする（「解析済みならスキップ」する段階制御（`architecture.md` §4）と同じ場所に置く）。
+
+両ゲートが同一契約を参照することで、背景ジョブがモデル未取得サービスを呼び出す事態を防ぐ（DEV-386 §6）。
+
+### 7.6 実装配置とフォールバック登録
+
+契約は `Core` に置くが、既定実装は三つの入力を必要とする。
+すなわち (a) 設定（`IAppSettings`、`Infrastructure`）、(b) `ModelDirectory` 配下のモデル有無（ファイルシステム）、(c) 能力ごとに必要なモデルの識別（AI サービスの `ModelDescriptor`）である。
+レイヤ規約上、単一の下位層からはこの三つを同時に参照できない（`AI` は `Infrastructure` を参照せず、`Infrastructure` は `AI` を参照しない）。
+したがって既定実装は `Infrastructure` に置き（`IAppSettings` とファイルシステムを参照）、能力 → 必要モデルの対応表（`Core` の型）は合成ルート（`App`）が AI サービスの `ModelDescriptor` から組み立てて注入する。
+これにより AI 層の知識は `App` の合成時に閉じ込められ、`Infrastructure` → `Core` のみの参照と `Core` の純粋性を保つ。
+生存期間は Singleton とする（§4 の推論サービス・設定と同じく、可否の単一の源とするため）。
+
+フォールバック登録の可否は次のとおり定める。
+値を返す無効化実装を DI の既定にしない（§6）。
+無効化は UI コマンドとジョブゲートで完結させ、これを主機構とする。
+やむをえずフォールバックを登録する場合でも、捏造した解析結果を返さず、境界（ジョブ層）で捕捉できる定義済みの「利用不可」例外を投げる形に限る（`architecture.md` §9）。
+この例外はゲートを補完する多重防御であって、可否判定の主機構ではない。
+
+## 8. P0 段階の扱いと未決事項
 
 本書は docs のみの変更であり、`src/` のコードと csproj を変更しない。
 したがって `dotnet build AiPhotoViewer.sln` と `dotnet test` の結果に影響しない。
@@ -129,14 +244,15 @@ ViewModel は具象型へダウンキャストせず、`IServiceProvider` を直
 
 **決定済み**: 合成ルートの参照境界は §2 のとおり確定した。`App` を「各機能層を参照してよい唯一の例外」とし、`AGENTS.md` §4 と `docs/architecture.md` §2 へ明記した（lead 承認済み）。
 
+**決定済み**: 能力問い合わせ口（capability query）の契約は §7 のとおり確定した（DEV-388）。契約は `Core`（`ICapabilityQuery` / `AnalysisCapability` / `CapabilityStatus`）に置き、UI コマンドとジョブゲートが同一契約を参照する。既定実装は `Infrastructure` に置き、能力 → 必要モデルの対応表は `App` が注入する。フォールバックは定義済み「利用不可」例外に限る多重防御とし、値を返す無効化実装を既定にしない。
+
 本書の確定後に引き継ぐ未決事項を挙げる。
 
-- **能力問い合わせ口の契約**（§6）。機能ごとの利用可否を返す IF の置き場所（`Core` か各機能層か）と戻り値の形。無効化サービスのフォールバック登録を許すか否かもここで確定する。
 - 接続ファクトリの具体形（単一接続の共有か、読み取り用と書き込み用の分離か）。PoC-3（DEV-44 SQLite 計測）の結果を踏まえて確定する。
 - ベクトル索引の構築契機（起動時一括か増分か）と、`IVectorIndex` の初期実装（線形探索か HNSW か）。PoC-6（DEV-51）の結果に従う。
 
 接続ファクトリとベクトル索引は契約 IF の背後の選択であり、本書の生存期間方針と解決経路を変えない。
-能力問い合わせ口は契約 IF に影響し得るため、実装着手前に確定する。
+§7 で契約 IF（`ICapabilityQuery` ほか）を確定したため、実装着手前に必要な設計ピースは揃った。コード化は後続の実装 Issue（`agent:codex-impl`）に委ねる。
 
 ---
 
