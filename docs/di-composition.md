@@ -207,6 +207,18 @@ public interface ICapabilityQuery
 - `IAppSettings.ModelDirectory` の変更、および同ディレクトリ配下のモデルファイルの取得・削除。
 - 機能トグルの変更（`FaceRecognitionEnabled` / `OcrEnabled` / `PrivacyCheckEnabled` / `BackgroundAnalysisEnabled`）。
 
+このうちモデルファイルの取得・削除はファイルシステム監視で観測できる。
+一方、設定のインメモリ編集（`IAppSettings` のプロパティ変更）は観測経路を別に定める必要がある。
+現状の `IAppSettings`（`src/Infrastructure/InfrastructureContracts.cs`）は可変プロパティと `SaveAsync` のみを公開し、変更通知を持たない。
+このため能力実装が `IAppSettings` を受け取るだけでは、設定 UI での `ModelDirectory` 変更や機能トグルの変更を確定的に観測できず、`CanExecute` がモデルディレクトリのファイル変更か再起動まで陳腐化し得る。
+
+観測経路を次のとおり定める。
+設定変更の通知責務を `IAppSettings` に持たせる。
+`IAppSettings` は可変設定の単一の源（§4）であり、変更通知を置く自然な場所はこの契約である。
+具体的には `IAppSettings` に変更通知イベント（たとえば `event EventHandler? Changed;`）を追加し、プロパティ変更または `SaveAsync` の確定時に発火させる。
+能力実装はこのイベントとファイルシステム監視の双方を購読し、いずれかの契機で可否を再評価する。
+`IAppSettings` への変更通知の追加はこの契約の前提であり、後続の実装 Issue（`agent:codex-impl`）で `InfrastructureContracts.cs` に反映する。
+
 再評価後、`ICapabilityQuery.CapabilitiesChanged` を発火する。
 UI はこのイベントを購読し、コマンドの `CanExecute` を再評価する。
 イベントはバックグラウンドスレッドで発火し得るため、UI への反映は §5 のとおり ViewModel が `Dispatcher` を介して UI スレッドへ戻す。
