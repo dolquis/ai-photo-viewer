@@ -16,6 +16,7 @@
 |---|---|
 | `docs/poc-tasks.md` | Phase 0 技術検証 PoC 一覧（PoC-1〜8） |
 | `docs/tech-selection.md` | 技術選定（UI / 言語 / 推論ランタイム / DB・ベクトル検索） |
+| `docs/library-selection.md` | 外部ライブラリ選定（方針スタックを具体的な NuGet へ対応づけ） |
 | `docs/architecture.md` | レイヤード構成・AI パイプライン・DB・ジョブ・ログ |
 | `docs/mvp-spec.md` | MVP 仕様・受け入れ条件（AC-x） |
 | `docs/roadmap.md` | Phase 0〜7 |
