@@ -215,6 +215,7 @@ public interface ICapabilityQuery
 
 - `IAppSettings.ModelDirectory` の変更、および同ディレクトリ配下のモデルファイルの取得・削除。
 - 機能トグルの変更（`FaceRecognitionEnabled` / `OcrEnabled` / `PrivacyCheckEnabled` / `BackgroundAnalysisEnabled`）。
+- 実行プロバイダの利用可否・選択の変更（EP が `NotPresent` / `NotReady` から `EnsureReadyAsync` 等で `Ready` へ転じる、使用デバイスの切り替え。§7.6 (d) の入力）。
 
 このうちモデルファイルの取得・削除はファイルシステム監視で観測できる。
 一方、設定のインメモリ編集（`IAppSettings` のプロパティ変更）は観測経路を別に定める必要がある。
@@ -227,6 +228,10 @@ public interface ICapabilityQuery
 具体的には `IAppSettings` に変更通知イベント（たとえば `event EventHandler? Changed;`）を追加し、プロパティ変更または `SaveAsync` の確定時に発火させる。
 能力実装はこのイベントとファイルシステム監視の双方を購読し、いずれかの契機で可否を再評価する。
 `IAppSettings` への変更通知の追加はこの契約の前提であり、後続の実装 Issue（`agent:codex-impl`）で `InfrastructureContracts.cs` に反映する。
+
+実行プロバイダの利用可否・選択の変更も、モデルファイルや設定トグルのイベントとは独立に `DeviceUnsupported` を変え得る。
+このため §7.6 (d) の `Core` 形プロバイダ状態入力にも変更通知を持たせ、能力実装がこれを購読して再評価する。
+プロバイダ状態が通知を持たないと、EP の準備完了やデバイス切り替えの後も無関係な設定/モデル変更か再起動まで可否が陳腐化する。
 
 再評価後、`ICapabilityQuery.CapabilitiesChanged` を発火する。
 UI はこのイベントを購読し、コマンドの `CanExecute` を再評価する。
@@ -247,8 +252,14 @@ UI とジョブは同一の `ICapabilityQuery` を参照する。
 モデル未取得や機能無効のあいだに取り込んだ画像は、当該のモデル依存段（`Embedding` / `Tagging` / `FaceDetection` / `FaceEmbedding` 等）がスキップされ、`AnalysisStatus` が未解析のまま残る。
 ゲートだけでは、後からモデルを取得・有効化しても UI の `CanExecute` が更新されるにとどまり、既出の画像に解析ジョブが積まれず手動の再解析まで解析されない。
 これを避けるため、`CapabilitiesChanged` で能力が利用可へ転じた契機を購読する再キュー経路を設ける。
-再キューはジョブ層（またはアプリケーション層のコーディネータ）が担い、当該段が未解析の既出画像に対応ジョブを投入する。
+再キューはジョブ層（またはアプリケーション層のコーディネータ）が担い、当該段が未処理の既出画像に対応ジョブを投入する。
 これは `architecture.md` §8 の「モデル変更時は該当解析を再キュー」および §4 の「解析済みならスキップ」と同じ場所・同じ冪等性の下で行う（重複や破損を生まない）。
+
+この再キューは「当該段が未処理の画像」を確定的に選べることが前提となる。
+現状のデータモデルは画像単位の単一 `Images.AnalysisStatus` しか持たず（`architecture.md` §6）、結果の不在は「スキップ」と「解析済みだが空結果（顔なし・タグなし）」を区別できない。
+段ごとの状態を持たないと、後続の再キューは対象を取りこぼすか、空結果の解析済み画像を再処理してしまう。
+したがって再キューの前提として、段ごとの完了状態（スキップ / 完了（空結果を含む）を判別できる段別ステータスまたはセンチネル）を持たせる。
+段別状態の具体的なスキーマ（`Images.AnalysisStatus` の段別化、または段ごとの完了記録テーブル）は、解析パイプラインと DB の実装 Issue（`architecture.md` §4 / §6）の担当範囲とし、本書は「再キューは段別の完了状態に依存する」という要件を記録するにとどめる。
 
 ### 7.6 実装配置とフォールバック登録
 
