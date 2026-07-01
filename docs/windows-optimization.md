@@ -303,7 +303,7 @@ Windows 実装は、すべて既存の契約インターフェースの裏に入
 | `IPowerStatusProvider`（新設） | Core（`Jobs` が参照するため） | GetSystemPowerStatus / PowerManager | `Infrastructure.Windows` | 常時 AC 扱い |
 | `IJobQueue` | Jobs | 変更なし（電源 IF を購読） | `Jobs` | 同左 |
 
-加速の利用可否は、`docs/di-composition.md` §6 の能力問い合わせ（capability query）に反映する。
+加速の利用可否は、`docs/di-composition.md` §6 の無効化方針と §7 の能力問い合わせ口（capability query）契約に反映する。
 WIC コーデックの有無、EP の `ReadyState`、モデルファイルの有無を能力問い合わせ口で確認し、利用不可の機能は UI で無効表示にし、ジョブ投入前にスキップする。
 無効化サービスに解析結果を捏造させない方針は変えない。
 
