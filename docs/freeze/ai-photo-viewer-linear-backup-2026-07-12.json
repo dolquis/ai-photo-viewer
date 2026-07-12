@@ -1,0 +1,859 @@
+{
+  "_snapshot": "AI Photo Viewer / Linear project issues — 凍結時点スナップショット",
+  "_capturedAt": "2026-07-12 (freeze, pre-archive states)",
+  "_projectId": "b0a9b96c-f841-445b-843c-16989b597cb8",
+  "_note": "凍結対象13件(archivedAt=null時点の状態)＋凍結前から既アーカイブ6件。解凍手順は docs/project-freeze-log.md 参照。",
+  "issueCount": 19,
+  "issues": [
+    {
+      "id": "3b01eae0-41f2-4d26-a04b-620725b0e1cc",
+      "identifier": "DEV-276",
+      "title": "Vendor shared Japanese doc-writing skill suite (.claude/.agents)",
+      "description": "agent-ops（origin）由来の共有日本語ドキュメント執筆スキルを本 repo の `.claude/skills/` と `.agents/skills/` 両ツリーにベンダリングする。\n\n## スキル\n\n* `japanese-tech-writing`（第一者 / gist 由来）\n* `argument-gap-edit`（第一者 / gist コメント由来）\n* `japanese-doc-workflow`（第一者 / 統合ワークフロー）\n* `doc-coauthoring`（第三者 / Apache-2.0 © Anthropic、`NOTICE.md` 同梱）\n* `docs-codebase`（第三者 / MIT © 2025 Vasiliy Uvarov、`NOTICE.md` 同梱）\n\n## 内容\n\n* Claude 版（`allowed-tools` 付き）と Codex 版（素）を両ツリーへ配置。本文同一、差分は `allowed-tools` のみ。\n* 第三者スキルは出典・ライセンスを `NOTICE.md` に保持。\n* origin は `dolquis/agent-ops`。改訂は origin で行い各 repo へ伝播。\n\n## 検証\n\n* 両ツリーに5スキルが揃い、相互参照（`../<name>/SKILL.md`）が解決することを確認。\n* Claude/Codex 版の差分が `allowed-tools` 行のみであることを確認。\n\nPR を本課題にリンクする。",
+      "priority": 4,
+      "url": "https://linear.app/dolquis/issue/DEV-276/vendor-shared-japanese-doc-writing-skill-suite-claudeagents",
+      "branchName": "dolquis/dev-276-vendor-shared-japanese-doc-writing-skill-suite-claudeagents",
+      "createdAt": "2026-06-20T14:47:23.725Z",
+      "updatedAt": "2026-06-20T16:29:35.323Z",
+      "archivedAt": "2026-06-21T12:51:04.756Z",
+      "startedAt": "2026-06-20T14:47:24.035Z",
+      "completedAt": "2026-06-20T16:29:35.299Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:docs"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": null
+    },
+    {
+      "id": "2fcc6e49-f5ae-4d30-916c-07875b0f99a6",
+      "identifier": "DEV-318",
+      "title": "Human Gate: Stage 1 readiness 判定",
+      "description": "## 人間ゲート\n\nP0（[DEV-40](https://linear.app/dolquis/issue/DEV-40/photo-track) / PoC-1〜8）の計測結果をもとに、**Stage 1 (core viewer) 着手可否を人間 lead が判定する**ゲート。プロジェクト description の「Human Gate」で既に宣言されているが、これまで Issue 化されていなかったため、管制塔（Linear）の状態と宣言済みポリシーを一致させる目的で起票する。\n\n## なぜ分離するか（`docs/linear-conventions.md` §7.1）\n\n* [DEV-54](https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review)「Photo P0 result review」は `agent:claude-review` の AI レビュー Issue（PoC 計測結果の整理・整合確認）。\n* 本 Issue は実機・実データ計測に基づく **人間判断**で、§7.1.1 の分離テスト（実機・実データ計測を要し、同一レビュー内で即座に記録できない判断）に該当する。\n* 設計レビュー（[DEV-54](https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review)）と人間ゲート（本 Issue）を分けることで、設計 PR のマージで readiness 判定を構造的に飛び越えないようにする。\n\n## 判定インプット\n\n* PoC-1〜8 の計測値（[DEV-42](https://linear.app/dolquis/issue/DEV-42/photo-image-view-poc) / 43 / 44 / 45 / 50 / 51 / 52 / 53）\n* [DEV-54](https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review) のレビュー結果サマリ\n* 確定すべき設計判断（`docs/poc-tasks.md`「検証で確定させる設計判断」、`docs/tech-selection.md`）\n\n## Done 条件\n\n* Stage 1 着手可否（GO / NO-GO）の判断と根拠を本 Issue に検証メモとして記録する（合意日付き）。\n* 技術選定の採否があれば `docs/tech-selection.md` / `docs/roadmap.md` Phase 0 完了条件への反映を確認する。\n* GO の場合は follow-up として「Stage 1 split plan」設計 Issue（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) と同じ役割）を作成・リンクする。\n\n## 運用上の注意\n\n* 人間専任のため `agent:*` は付けない（§2 / §7 Ready で免除）。\n* 本 Issue を PR の closing keyword（`Fixes`）で参照しない。PR リンクは attachment で手動付与する（§7.1.3）。\n* 関連: [DEV-54](https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review)（related） / [DEV-40](https://linear.app/dolquis/issue/DEV-40/photo-track)（parent）。Stage 1 実装 Issue は未作成のため、GO 判定後に本ゲートを `blocks` で接続する。",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-318/human-gate-stage-1-readiness-判定",
+      "branchName": "dolquis/dev-318-human-gate-stage-1-readiness-判定",
+      "createdAt": "2026-06-21T14:34:27.741Z",
+      "updatedAt": "2026-06-28T03:07:25.144Z",
+      "archivedAt": null,
+      "startedAt": "2026-06-26T14:39:08.171Z",
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "In Progress",
+        "type": "started"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "gate:human-required"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "cfe2cadf-3bf6-4543-bb92-9c8f8f34f797",
+      "identifier": "DEV-386",
+      "title": "DI 合成ルート（Composition Root）と依存解決方針の設計",
+      "description": "## 背景・課題\n\n`docs/architecture.md` §1 / §2 は「層間はインターフェースで接続し、実装は DI コンテナで注入する」「`App` → `UI` / `Core` を参照し、DI で具象実装を結線する」と宣言している。一方で**合成ルート（composition root）の設計が docs にもコードにも存在しない**。\n\n* `src/App/Program.cs` / `App.axaml.cs` は `new MainWindow()` 直結で、DI コンテナを構築していない。\n* DI 関連の記述はリポジトリ全体で `architecture.md` の言及のみ（`Microsoft.Extensions.DependencyInjection` 参照なし）。\n* 各層の契約 IF（`*Contracts.cs` / `InferenceServices.cs` / `Repositories.cs` / `JobQueue.cs`）は揃っているが、**誰がどの生存期間で具象を登録・解決し、ViewModel へ渡すか**の方針が未定義。\n\nこの方針が無いと Stage 1 実装で各実装者が結線方法をばらばらに決めてしまい、レイヤ依存規約（AGENTS.md §4）違反や生存期間バグ（DB 直列化・ジョブキューの単一性など）を招きやすい。\n\n## スコープ\n\nPoC の実測値に依存しない**基盤設計**であり、人間ゲート（[DEV-318](https://linear.app/dolquis/issue/DEV-318/human-gate-stage-1-readiness-判定) Stage 1 readiness）とは独立に確定できる。本 Issue は**設計ドキュメントの新規作成**に限定し、具象実装やパッケージ追加（= `agent:codex-impl` の領域）は行わない。\n\n成果物: `docs/di-composition.md`（新規）＋ `docs/architecture.md` からの相互リンク。\n\n## 受け入れチェック\n\n- [ ] 合成ルートの位置（App 層・起動シーケンス）と採用コンテナ方針を定義\n- [ ] 各契約 IF の生存期間（Singleton / Transient）方針と根拠を表で明示\n- [ ] UI(ViewModel) が具象に依存せず DI 解決する流れ（レイヤ規約の遵守）を記述\n- [ ] DB 書き込み直列化・JobQueue 単一性・Watcher 等のスレッド/生存期間上の注意を反映\n- [ ] 「モデル未取得時に該当機能を無効化」する登録方針（architecture §5 / §8）を反映\n- [ ] P0 段階では実装を伴わず、docs のみ（`dotnet build` 影響なし）であることを明記\n\n## 関連\n\n* 正典: `docs/architecture.md` §1・§2・§5・§8\n* 規約: `AGENTS.md` §4（レイヤ依存）、`docs/linear-conventions.md` §2（`agent:claude-design`）",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計",
+      "branchName": "dolquis/dev-386-di-合成ルート（composition-root）と依存解決方針の設計",
+      "createdAt": "2026-06-28T03:07:25.144Z",
+      "updatedAt": "2026-07-05T23:09:33.913Z",
+      "archivedAt": "2026-07-05T23:10:04.040Z",
+      "startedAt": "2026-06-28T03:07:31.314Z",
+      "completedAt": "2026-07-05T23:09:33.886Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "e9928ad0-c839-42f4-ba28-d5739dc41cff",
+      "identifier": "DEV-387",
+      "title": "DI 合成ルートの参照境界を正典へ反映（App を唯一の例外として明記）",
+      "description": "## 背景\n\n[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計)（DI 合成ルート設計、PR #12 マージ済み）で残した「要 lead 判断」の未決事項のうち、**合成ルートの参照境界**について lead が方針を承認した。\n\n決定: 合成ルート（`App`）を「各機能層の具象を登録するために参照してよい唯一の例外」とする（標準的な DI 構造。専用 Composition プロジェクト案は不採用）。\n\n## 変更内容\n\n* `AGENTS.md` §4: `App` の参照規約に合成ルート例外を追記。\n* `docs/architecture.md` §2 参照規則: 同上。\n* `docs/di-composition.md` §2 / §7: 例外を「lead 承認のもと正典へ明記」と確定し、未決事項から外す。\n\n## スコープ外（後続）\n\n* 能力問い合わせ口（capability query）の契約確定（[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計) §6 の残未決）。\n* 合成ルートのコード化・パッケージ追加は `agent:codex-impl` の実装 Issue。\n\n## 関連\n\n* Refs [DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計)",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-387/di-合成ルートの参照境界を正典へ反映app-を唯一の例外として明記",
+      "branchName": "dolquis/dev-387-di-合成ルートの参照境界を正典へ反映（app-を唯一の例外として明記）",
+      "createdAt": "2026-06-28T12:28:09.009Z",
+      "updatedAt": "2026-07-05T01:00:08.124Z",
+      "archivedAt": "2026-07-05T01:05:54.629Z",
+      "startedAt": "2026-06-28T12:28:09.101Z",
+      "completedAt": "2026-07-05T00:48:41.279Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:docs"
+          },
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "fa6b2953-35ce-4fe2-83ad-e1a09b13f3fb",
+      "identifier": "DEV-388",
+      "title": "能力問い合わせ口（capability query）の契約設計",
+      "description": "## 背景\n\n[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計)（DI 合成ルート設計）§6 で、モデル未取得時の無効化は「登録の差し替え（値を返す Null 実装）ではなく、呼び出し前のゲートで表現する」と確定した。その前提となる**機能ごとの利用可否を返す能力問い合わせ口（capability query）の契約**は、[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計) §7 の残未決事項として実装着手前の確定が必要。\n\n合成ルートの参照境界は [DEV-387](https://linear.app/dolquis/issue/DEV-387/di-合成ルートの参照境界を正典へ反映app-を唯一の例外として明記) で確定済み。本 Issue はその次の設計ピースにあたる。\n\n## スコープ\n\n設計ドキュメントの確定に限定し、具象実装やパッケージ追加（= `agent:codex-impl`）は含まない。成果物は `docs/di-composition.md` §6/§7 の具体化、または必要なら capability query 専用の設計節/ドキュメント。\n\n## 決めること\n\n* **IF の置き場所**: `Core`（純粋ドメイン契約）か各機能層か。`Core` は他層を参照しない制約（AGENTS §4）との整合を取る。\n* **粒度と識別**: 機能の単位（解析ジョブ種別 `AnalysisJobKind` に対応させるか、推論サービス単位か）と、利用可否を引く鍵。\n* **戻り値の形**: 単純な可否か、理由（モデル未取得 / デバイス非対応等）を含むか。`ModelDescriptor` との関係。\n* **更新契機**: 設定変更・モデル取得/削除（`IAppSettings.ModelDirectory` 配下）時の可否の再評価と通知方法。\n* **消費側の整合**: UI コマンド可否と `IJobQueue` 投入/実行前ゲートの双方が同一の問い合わせ口を参照すること（[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計) §6）。\n* **フォールバック登録の可否**: やむをえない場合の「利用不可」例外（境界で捕捉、`architecture.md` §9）を許すか、UI/ジョブゲートのみで完結させるか。\n\n## 受け入れチェック\n\n- [ ] 上記6点が docs に明記され、[DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計) §6/§7 と矛盾しない\n- [ ] `Core` のレイヤ規約（他層非参照）を侵さない置き場所になっている\n- [ ] UI とジョブ双方のゲートが同一契約を参照する旨が一貫している\n- [ ] docs のみの変更でビルドに影響しないこと、コード化は後続実装 Issue である旨を明記\n\n## 関連\n\n* Refs [DEV-386](https://linear.app/dolquis/issue/DEV-386/di-合成ルートcomposition-rootと依存解決方針の設計)（§6/§7）, [DEV-387](https://linear.app/dolquis/issue/DEV-387/di-合成ルートの参照境界を正典へ反映app-を唯一の例外として明記)\n* 正典: `docs/di-composition.md` §6/§7、`docs/architecture.md` §5/§8/§9、`AGENTS.md` §4",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-388/能力問い合わせ口capability-queryの契約設計",
+      "branchName": "dolquis/dev-388-能力問い合わせ口（capability-query）の契約設計",
+      "createdAt": "2026-06-28T12:30:51.539Z",
+      "updatedAt": "2026-07-05T23:09:35.258Z",
+      "archivedAt": "2026-07-05T23:10:06.191Z",
+      "startedAt": "2026-07-01T05:25:04.531Z",
+      "completedAt": "2026-07-05T23:09:35.223Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:ai-runtime"
+          },
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "f0b2504e-3ac9-4d99-a946-1ba477aa3576",
+      "identifier": "DEV-40",
+      "title": "Photo Track",
+      "description": "P0 control issue. Start with [DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan). Use child issues for Codex work. Review outputs in [DEV-54](https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review).",
+      "priority": 2,
+      "url": "https://linear.app/dolquis/issue/DEV-40/photo-track",
+      "branchName": "dolquis/dev-40-photo-track",
+      "createdAt": "2026-06-02T09:13:51.217Z",
+      "updatedAt": "2026-06-21T14:34:27.741Z",
+      "archivedAt": null,
+      "startedAt": "2026-06-02T11:29:51.778Z",
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "In Progress",
+        "type": "started"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:tracking"
+          },
+          {
+            "name": "agent:claude-review"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "9959690c-033a-4db8-8647-3b8ea03455f0",
+      "identifier": "DEV-41",
+      "title": "Photo P0 split plan",
+      "description": "Read repo docs. Split P0 work into small tasks. Add order and checks.",
+      "priority": 2,
+      "url": "https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan",
+      "branchName": "dolquis/dev-41-photo-p0-split-plan",
+      "createdAt": "2026-06-02T09:19:20.885Z",
+      "updatedAt": "2026-06-26T15:37:24.755Z",
+      "archivedAt": "2026-06-27T00:53:28.742Z",
+      "startedAt": "2026-06-02T11:29:51.780Z",
+      "completedAt": "2026-06-26T15:37:24.726Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:photo-ui"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "3cbd8747-b3f2-4ffe-8293-9a130eb5c0ca",
+      "identifier": "DEV-417",
+      "title": "Windows 特化（非UI層）技術調査と設計方針（docs/windows-optimization.md）",
+      "description": "利用者起点の技術調査。UI フレームワーク（Avalonia）を変えずに、推論・画像デコード・サムネイル生成・ベクトル検索・電源管理などの非 UI 層を Windows ネイティブ技術で特化する方針と具体策をまとめる。\n\n## 成果物\n\n* `docs/windows-optimization.md`（新規設計文書）\n* `docs/tech-selection.md` §3 / §5 を Windows ML 推奨へ更新（DirectML 前提からの是正）\n\n## 要点\n\n* 加速は契約インターフェースの裏に閉じ込め、`Core` は `net8.0` で移植可能に保つ\n* 相互運用: C#/WinRT（TFM `net8.0-windows10.0.x`）/ C#/Win32（CsWin32）\n* AI 推論: Windows ML + ONNX Runtime（`ExecutionProviderCatalog`、CPU/DirectML 同梱、NPU EP は取得または同梱、オフラインは bring your own EPs）\n* 画像: WIC（`BitmapDecoder`）/ Explorer サムネイルキャッシュ（`StorageFile.GetThumbnailAsync`）/ PhotoSauce MagicScaler\n* ベクトル検索: sqlite-vec / HNSW / DiskANN の比較（既存の HNSW + SQLite を裏付け）\n* 電源: `GetSystemPowerStatus` / `PowerManager`（契約は `Core`、実装は `Infrastructure.Windows`。Jobs → Core のみ参照を順守）\n* TFM 連鎖回避のため Windows 実装を `*.Windows` に分離し `App` のみ参照、CI は ubuntu / windows 分割\n\n## 関連\n\n* PR #15（本調査の成果物）\n* 関連: [DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan)（P0 分割計画）、PoC-1（[DEV-42](https://linear.app/dolquis/issue/DEV-42/photo-image-view-poc)）/ PoC-2（[DEV-43](https://linear.app/dolquis/issue/DEV-43/photo-grid-poc)）/ PoC-5 / PoC-6\n* 後続（別 Issue）: `*.Windows` 実装の追加、CI 分割、能力問い合わせ口（capability query）の契約確定\n\n状態運用: PR レビュー中のため In Review。検証メモ記載後に Done へ遷移する（AGENTS.md §2 / `docs/linear-conventions.md` §7.1.3）。",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-417/windows-特化非ui層技術調査と設計方針docswindows-optimizationmd",
+      "branchName": "dolquis/dev-417-windows-特化（非ui層）技術調査と設計方針（docswindows-optimizationmd）",
+      "createdAt": "2026-06-30T23:17:43.980Z",
+      "updatedAt": "2026-07-05T23:09:36.754Z",
+      "archivedAt": "2026-07-05T23:10:07.190Z",
+      "startedAt": "2026-06-30T23:17:46.663Z",
+      "completedAt": "2026-07-05T23:09:36.717Z",
+      "canceledAt": null,
+      "state": {
+        "name": "Done",
+        "type": "completed"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "ff486246-35f9-415a-87c6-a714cf4e247b",
+      "identifier": "DEV-419",
+      "title": "デコード可否（WIC コーデック）のゲート方針を決める（capability query との関係）",
+      "description": "## 背景\n\n[DEV-388](https://linear.app/dolquis/issue/DEV-388/能力問い合わせ口capability-queryの契約設計)（能力問い合わせ口 capability query の契約設計、PR #16）のレビューで、Codex が次の不整合を指摘した。\n\n* `docs/di-composition.md` §7 の `ICapabilityQuery` / `AnalysisCapability` は **モデル依存の推論機能** に鍵を限定し、`Thumbnail` などデコード関連の段は「常に利用可」とする。\n* 一方 `docs/windows-optimization.md` は「WIC コーデックの有無を能力問い合わせ口で確認する」と記す。\n* このため、Windows に当該フォーマットの WIC コーデックが無い場合、共有契約（capability query）では利用不可を表現できず、実装はサムネイル/デコードジョブを投入したうえで UI/ジョブが場当たりに失敗する余地が残る。\n\n[DEV-388](https://linear.app/dolquis/issue/DEV-388/能力問い合わせ口capability-queryの契約設計) のレビューでは、capability query 契約を **モデル依存推論のゲート** にスコープを確定（freeze）した。デコード可否（コーデック依存）は別種の関心事のため、本 Issue に切り出す。\n\n## 決めること\n\n* デコード可否（WIC コーデックの有無・未対応フォーマット）を、\n  * (A) capability query に `Decode`（あるいは `Thumbnail`/デコード用）能力として組み込むか、\n  * (B) capability query とは別のデコード可否機構（例: デコード前チェック + `architecture.md` §9 の境界での想定内エラー処理）に置くか、\n    を決める。\n* 上記の決定に合わせて `docs/windows-optimization.md`（「WIC コーデックの有無を能力問い合わせ口で確認」の記述）と `docs/di-composition.md` §7（デコード段は常に利用可の扱い）の整合を取る。\n* 破損ファイル・未対応形式は `architecture.md` §9 で「想定内ケースとして握り潰さずログ記録」とあるため、その方針との重複・分担を明確化する。\n\n## スコープ\n\n設計ドキュメントの確定に限定（`agent:claude-design`）。具象実装は含まない。\n\n## 関連\n\n* Refs [DEV-388](https://linear.app/dolquis/issue/DEV-388/能力問い合わせ口capability-queryの契約設計)（PR #16、`docs/di-composition.md` §7）\n* 正典: `docs/windows-optimization.md`、`docs/architecture.md` §4 / §9、`docs/di-composition.md` §7",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-419/デコード可否wic-コーデックのゲート方針を決めるcapability-query-との関係",
+      "branchName": "dolquis/dev-419-デコード可否（wic-コーデック）のゲート方針を決める（capability-query-との関係）",
+      "createdAt": "2026-07-01T06:14:46.907Z",
+      "updatedAt": "2026-07-11T02:49:43.066Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:image-core"
+          },
+          {
+            "name": "area:base"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-design"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": null
+    },
+    {
+      "id": "fa7c4d05-d6e4-4f19-9892-cff4e873aa78",
+      "identifier": "DEV-42",
+      "title": "Photo image view POC",
+      "description": "Build a small view test for large images. Record speed and memory notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-1 画像表示性能）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC1-ImageView/`（最小 Avalonia アプリ。大画像の表示・拡大縮小・回転を計測）\n* 整合を取る本実装の雛形: `src/App/MainWindow.axaml` / `src/App/MainWindow.axaml.cs`、`src/UI/ViewModels/MainWindowViewModel.cs`\n* 結果反映先: `docs/tech-selection.md`（1章 UIフレームワーク）、`docs/roadmap.md`（Phase 0 / Phase 1 AC-1）\n\n### 受け入れ条件\n\n* 数十MP（目安 50–100MP）画像の表示・拡大縮小・回転が体感遅延なし（操作→描画 100ms 未満目安）\n* 表示中メモリが画像サイズに対し破綻しない（デコード/ダウンサンプル制御を確認）\n* Skia GPU 合成の効果を確認し、CPU フォールバック時との差も記録\n\n### 検証コマンド\n\n```\ndotnet --version                          # 8.x を確認\ndotnet run --project poc/PoC1-ImageView   # サンプル大画像で表示・操作確認\ndotnet build AiPhotoViewer.sln            # 既存雛形のビルドを壊さない\n```\n\n### 完了後に記録すべき測定値\n\n* 画像読み込み時間（ms、解像度別）\n* 拡大縮小・回転操作の応答（ms）と体感\n* ピークメモリ（MB）\n* GPU合成 有/無 の差\n* 結論: Avalonia 採用可否（`docs/tech-selection.md` 1章へ反映）",
+      "priority": 2,
+      "url": "https://linear.app/dolquis/issue/DEV-42/photo-image-view-poc",
+      "branchName": "dolquis/dev-42-photo-image-view-poc",
+      "createdAt": "2026-06-02T09:20:00.981Z",
+      "updatedAt": "2026-07-01T05:46:46.071Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:photo-ui"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "832e25d1-7af4-494b-b1c5-3e76ff9c5f99",
+      "identifier": "DEV-43",
+      "title": "Photo grid POC",
+      "description": "Build a grid test for many image items. Record scroll feel and cache notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-2 サムネイル生成・グリッド仮想化）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC2-ThumbnailGrid/`（仮想化グリッド + サムネ生成/キャッシュ計測）\n* 整合を取る本実装の契約: `src/Imaging/ImagingContracts.cs`（`IThumbnailGenerator`）、将来の表示先 `src/UI/ViewModels/MainWindowViewModel.cs`\n* 結果反映先: `docs/tech-selection.md`（1章 仮想化リスト/グリッド）、`docs/roadmap.md`（Phase 1 AC-1）\n\n### 受け入れ条件\n\n* 5万件相当のグリッドが滑らかにスクロール（目標 \\~60fps、最低 30fps）\n* 仮想化が有効（可視範囲のみ実体化し、件数に依らずメモリがほぼ一定）\n* サムネキャッシュ再利用で2回目以降のスクロール/表示が高速化\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC2-ThumbnailGrid -- --count 50000\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* スクロール FPS（中央値 / 最低値）\n* サムネ生成速度（枚/秒）\n* キャッシュ I/O（初回生成 vs キャッシュヒット時間）\n* ピークメモリ（MB、5万件時）\n* 結論: グリッド仮想化方式の確定事項（`docs/tech-selection.md` 1章へ反映）",
+      "priority": 2,
+      "url": "https://linear.app/dolquis/issue/DEV-43/photo-grid-poc",
+      "branchName": "dolquis/dev-43-photo-grid-poc",
+      "createdAt": "2026-06-02T09:20:28.809Z",
+      "updatedAt": "2026-07-01T05:46:47.383Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:image-core"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "234c6f04-917f-46d5-8771-f09c0df8fed6",
+      "identifier": "DEV-44",
+      "title": "Photo DB POC",
+      "description": "Test local data store with many rows. Record read speed and write notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-3 SQLite 管理）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC3-Sqlite/`（`Microsoft.Data.Sqlite` で10万行の登録/更新/ページング取得、INDEX効果、WAL並行性を計測）\n* 整合を取る本実装の契約: `src/Database/Repositories.cs`（`IImageRepository` / `IEmbeddingRepository` / `IDatabaseInitializer`）、`src/Core/Domain/ImageItem.cs`、`src/Core/Domain/Embeddings.cs`\n* 結果反映先: `docs/architecture.md`（6章 DB設計）、`docs/tech-selection.md`（4章 DB）\n\n### 受け入れ条件\n\n* 一覧ページング取得が 100ms 未満（10万行・インデックス利用時）\n* INDEX 有/無 で取得時間差を確認（`FilePath`(UNIQUE) / `FileHash` / `PerceptualHash` / `AnalysisStatus`）\n* WAL モードで読み取り中の書き込みが並行できる（破損なし）\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC3-Sqlite -- --rows 100000\ndotnet build AiPhotoViewer.sln && dotnet test\n```\n\n### 完了後に記録すべき測定値\n\n* 10万行 登録時間 / 1行 更新時間\n* ページング取得（ms、INDEX 有 / 無）\n* DBファイルサイズ（MB）\n* WAL での並行読み書きの挙動\n* 結論: スキーマ・インデックス確定事項（`docs/architecture.md` 6章へ反映）",
+      "priority": 2,
+      "url": "https://linear.app/dolquis/issue/DEV-44/photo-db-poc",
+      "branchName": "dolquis/dev-44-photo-db-poc",
+      "createdAt": "2026-06-02T09:21:01.361Z",
+      "updatedAt": "2026-07-01T05:46:48.879Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:db"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "7a787c38-c83a-4b14-a5c1-d1559fbbdd1d",
+      "identifier": "DEV-45",
+      "title": "Photo duplicate POC",
+      "description": "Compare duplicate finding methods. Record speed and match quality.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-4 pHash 重複検知）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC4-Duplicate/`（pHash / dHash / aHash の計算速度・検出精度を比較）\n* 整合を取る本実装の契約: `src/Imaging/ImagingContracts.cs`（`IPerceptualHasher` / `IFileHasher`）、`src/Core/Domain/Duplicates.cs`、`src/Core/Domain/ImageItem.cs`（`PerceptualHash` / `FileHash`）\n* 結果反映先: `docs/architecture.md`（4章 パイプライン段階 4-5/13）、`docs/roadmap.md`（Phase 2）\n\n### 受け入れ条件\n\n* 加工違いペア（拡張子 / 解像度 / 圧縮違い）をハミング距離で安定検出（誤検出・見逃しを記録）\n* 完全一致はファイル内容ハッシュで検出できる\n* 採用すべきハミング距離しきい値の候補を提示できる\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC4-Duplicate -- --dataset <sample-dir>\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* pHash / dHash / aHash 各計算速度（枚/秒）\n* 検出精度（適合率 / 再現率）と推奨しきい値\n* 誤検出・見逃しの具体ケース\n* 結論: 採用ハッシュ方式と既定しきい値",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-45/photo-duplicate-poc",
+      "branchName": "dolquis/dev-45-photo-duplicate-poc",
+      "createdAt": "2026-06-02T09:21:20.532Z",
+      "updatedAt": "2026-07-01T05:46:50.025Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:image-core"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "03c48c72-f748-4731-b39c-c93b6258c477",
+      "identifier": "DEV-50",
+      "title": "Photo runtime POC",
+      "description": "Test local model run path. Record device support and fallback notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-5 ONNX 画像埋め込み・実行プロバイダ）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC5-OnnxRuntime/`（ONNX Runtime で埋め込み生成、CPU / DirectML EP の速度比較、前処理コスト計測）\n* 整合を取る本実装の契約: `src/AI/Inference/ExecutionProvider.cs`（`ExecutionProvider` / `ModelDescriptor`）、`src/AI/Inference/InferenceServices.cs`（`IImageEmbeddingService`）、`src/Core/Domain/Embeddings.cs`（`Vector` は正規化済み）\n* モデル配置: `models/`（`docs/model-management.md`）\n* 結果反映先: `docs/tech-selection.md`（3章 推論ランタイム / 既定EP確定）、`docs/roadmap.md`（Phase 0 EP互換性）\n\n### 受け入れ条件\n\n* CPU EP のみでも実用的スループット（目標値を記録）\n* DirectML EP が利用可能な環境で動作し速度向上を確認、非対応環境では CPU へフォールバック\n* 前処理（リサイズ/正規化）コストを推論本体と分離して計測\n* 出力埋め込みが正規化済みで `ImageEmbedding.Vector` の想定と整合\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC5-OnnxRuntime -- --ep cpu\ndotnet run --project poc/PoC5-OnnxRuntime -- --ep directml\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* 埋め込み生成スループット（img/s、EP別）\n* 前処理 vs 推論 の時間内訳（ms）\n* モデルロード時間 / メモリ（MB）\n* DirectML 互換性（動作・非動作デバイス）と CPU フォールバック実用性\n* 結論: 既定 EP の決定（`docs/tech-selection.md` 3章へ反映）と採用モデル名・バージョン",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-50/photo-runtime-poc",
+      "branchName": "dolquis/dev-50-photo-runtime-poc",
+      "createdAt": "2026-06-02T09:27:56.775Z",
+      "updatedAt": "2026-07-01T05:46:50.943Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Todo",
+        "type": "unstarted"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:ai-runtime"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "af48ac42-5c5d-4f53-bfe4-4d757077545c",
+      "identifier": "DEV-51",
+      "title": "Photo vector POC",
+      "description": "Test nearest item lookup. Record speed, memory, and quality notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-6 ベクトル検索）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。PoC-5（[DEV-50](https://linear.app/dolquis/issue/DEV-50/photo-runtime-poc)）の埋め込み出力を入力に使う。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC6-VectorSearch/`（線形探索 / HNSW / `sqlite-vec` の検索速度・精度・メモリを比較）\n* 整合を取る本実装の契約: `src/Search/SearchContracts.cs`（`IVectorIndex` / `VectorMatch`）、`src/Core/Domain/Embeddings.cs`\n* 結果反映先: `docs/tech-selection.md`（4章 ベクトル検索方式の確定: HNSW か `sqlite-vec` か）、`docs/architecture.md`（7章）、`docs/roadmap.md`（Phase 2）\n\n### 受け入れ条件\n\n* 10万件で近傍検索が 1秒以内（各方式で計測）\n* 近似（HNSW）の精度を線形探索を真値として recall@k で評価\n* 索引構築時間・メモリを記録し、永続化（SQLite BLOB）との併用可否を確認\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC6-VectorSearch -- --method linear   --n 100000\ndotnet run --project poc/PoC6-VectorSearch -- --method hnsw      --n 100000\ndotnet run --project poc/PoC6-VectorSearch -- --method sqlite-vec --n 100000\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* 検索レイテンシ（ms、方式別 @10万件）\n* recall@10（HNSW / sqlite-vec vs 線形探索）\n* 索引構築時間 / ピークメモリ（MB）\n* 結論: ベクトル検索方式の確定（`docs/tech-selection.md` 4章へ反映）",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-51/photo-vector-poc",
+      "branchName": "dolquis/dev-51-photo-vector-poc",
+      "createdAt": "2026-06-02T09:38:42.734Z",
+      "updatedAt": "2026-06-03T03:51:34.383Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Backlog",
+        "type": "backlog"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:search"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "08474373-6fe5-4750-a99c-b5c1175ee182",
+      "identifier": "DEV-52",
+      "title": "Photo text search POC",
+      "description": "Test natural language lookup. Record sample queries and result quality.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-8 自然言語検索）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。PoC-5（[DEV-50](https://linear.app/dolquis/issue/DEV-50/photo-runtime-poc) 埋め込み）/ PoC-6（[DEV-51](https://linear.app/dolquis/issue/DEV-51/photo-vector-poc) 索引）に依存。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC8-TextSearch/`（テキスト埋め込みと画像埋め込みの整合、日本語クエリでの妥当性を評価）\n* 整合を取る本実装の契約: `src/AI/Inference/InferenceServices.cs`（`IImageEmbeddingService.EmbedTextAsync`）、`src/Search/SearchContracts.cs`（`ISearchService.SearchByTextAsync`）\n* 結果反映先: `docs/roadmap.md`（Phase 3 完了条件）、`docs/tech-selection.md`（採用埋め込みモデルの選定）\n\n### 受け入れ条件\n\n* 「夜の神社」等の日本語クエリで妥当な上位結果が返る（多言語対応モデル前提、目視評価）\n* テキスト埋め込みと画像埋め込みが同一空間で整合し、類似度が意味的に妥当\n* 再現可能なサンプルクエリ集と期待結果を用意する\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC8-TextSearch -- --query \"夜の神社\" --top 20\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* サンプルクエリごとの上位 k 妥当性（目視スコア / メモ）\n* 日本語 vs 英語クエリの精度差\n* 採用したテキスト/画像埋め込みモデル名・バージョン\n* 結論: 自然言語検索の実現可否と選定モデル（Phase 3 完了条件へ反映）",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-52/photo-text-search-poc",
+      "branchName": "dolquis/dev-52-photo-text-search-poc",
+      "createdAt": "2026-06-02T09:38:55.036Z",
+      "updatedAt": "2026-06-03T03:51:37.833Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Backlog",
+        "type": "backlog"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:search"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "d1c1526c-a93e-482c-ad8e-08ed666b0d2e",
+      "identifier": "DEV-53",
+      "title": "Photo people POC",
+      "description": "Test grouping of people across sample images. Record quality and risk notes.\n\n---\n\n## レビュー追記（[DEV-41](https://linear.app/dolquis/issue/DEV-41/photo-p0-split-plan) P0分割 / PoC-7 顔検出・人物グループ化）\n\n> 前提: PoC は使い捨て。本実装コードベースとは分離して計測する（`docs/poc-tasks.md` 冒頭）。要 .NET 8 SDK。\n\n### 対象ファイル\n\n* 新規（使い捨て）: `poc/PoC7-Faces/`（顔検出の精度・速度、顔特徴量によるクラスタリング品質を計測）\n* 整合を取る本実装の契約: `src/AI/Inference/InferenceServices.cs`（`IFaceDetectionService` / `IFaceRecognitionService` / `FaceDetection`）、`src/Core/Domain/Faces.cs`\n* 結果反映先: `docs/roadmap.md`（Phase 4 完了条件 / AC-7）、`docs/privacy.md`\n\n### 受け入れ条件\n\n* 同一人物が安定して同一クラスタにまとまる（複数サンプルで確認）\n* 顔検出の精度・速度を記録し、誤検出 / 未検出の傾向を把握\n* 顔特徴量がローカル保存に限定され外部送信されない（AC-7）ことを確認\n\n### 検証コマンド\n\n```\ndotnet run --project poc/PoC7-Faces -- --dataset <sample-people-dir>\ndotnet build AiPhotoViewer.sln\n```\n\n### 完了後に記録すべき測定値\n\n* 顔検出精度（適合率 / 再現率）・速度（枚/秒）\n* クラスタリング品質（同一人物の純度 / 分離度）\n* 誤統合・過分割の傾向と推奨しきい値\n* 採用モデル（検出 / 特徴量）名・バージョン\n* 結論: 人物グループ化の実現可否（Phase 4 完了条件へ反映）",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-53/photo-people-poc",
+      "branchName": "dolquis/dev-53-photo-people-poc",
+      "createdAt": "2026-06-02T09:39:08.974Z",
+      "updatedAt": "2026-06-03T03:51:41.385Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Backlog",
+        "type": "backlog"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:faces"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:implementation"
+          },
+          {
+            "name": "agent:codex-impl"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": null
+    },
+    {
+      "id": "e23670ac-5045-4e3f-95ab-9fbc07a93836",
+      "identifier": "DEV-54",
+      "title": "Photo P0 result review",
+      "description": "Review P0 outputs. Decide Stage 1 readiness and follow up tasks.",
+      "priority": 3,
+      "url": "https://linear.app/dolquis/issue/DEV-54/photo-p0-result-review",
+      "branchName": "dolquis/dev-54-photo-p0-result-review",
+      "createdAt": "2026-06-02T10:19:45.342Z",
+      "updatedAt": "2026-06-26T14:39:08.291Z",
+      "archivedAt": null,
+      "startedAt": "2026-06-26T14:39:08.164Z",
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "In Progress",
+        "type": "started"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:photo-ui"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-review"
+          }
+        ]
+      },
+      "parent": {
+        "identifier": "DEV-40"
+      },
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": {
+        "name": "P0 Technical validation"
+      },
+      "assignee": {
+        "name": "Shoji Fujimoto"
+      }
+    },
+    {
+      "id": "2f99a603-d7e1-4a34-8455-b8995582153c",
+      "identifier": "DEV-67",
+      "title": "[Recurring] Linear control tower audit — AI Photo Viewer",
+      "description": "## Agent Handoff\n\n* Type: review\n* Agent: claude-review\n* Repo: dolquis/ai-photo-viewer\n* Goal: 本プロジェクトの Linear ルーティング衛生を週次点検する（この recurring audit Issue 自体は `area:*` 免除。正典: `docs/linear-conventions.md` §11）。\n* Codex safety: `agent:codex-*` はルーティングのみ。Claude は Codex へ delegate / assign / mention しない。\n\n## チェックリスト（docs/linear-conventions.md §11）\n\n- [ ] Project 未設定の Issue\n- [ ] `repo:` ラベル欠落（Phase 4 完了までは repo 固有の旧 repo ラベルも有効）\n- [ ] `area:*` ラベル欠落（本 audit Issue 自体を除く）\n- [ ] `agent:` ラベル欠落（`gate:human-required` の人間専任タスクを除く）\n- [ ] Migrated なのに GitHub リンク欠落\n- [ ] 人間確認が要るのに `gate:human-required` 欠落\n- [ ] Tracking Issue で子が未リンク\n- [ ] 実行順序を表さなくなったブロッカー\n- [ ] Done なのに検証ノート欠落\n- [ ] `agent:claude-*` と `gate:human-required` が同居した Issue（Design / Gate 分割漏れ。§7.1）\n- [ ] Done の設計 Issue（`agent:claude-*` 付き）に `gate:human-required` が残っている（分割後に除去すべき stale ラベル）\n- [ ] 人間ゲート Issue が PR の auto-close 対象になっている（closing キーワードで参照されている）\n- [ ] `type:tracking` Issue が Codex 実行候補（`agent:codex-*` + Todo・delegate なし・非ブロック）として Candidate Queue（§10）に現れている（tracking は束ね専用で直接実装しない。実行は子 implementation Issue へ降ろす）\n\n### Codex safety checks\n\n- [ ] 人間 lead の明示許可なく Codex へ delegate された Issue がない\n- [ ] 明示許可なく Codex mention トークン（`@`+`Codex`）を含むコメント / Issue 本文 / テンプレートがない\n- [ ] `agent:codex-*` をルーティング（候補）ラベルとしてのみ扱っている\n- [ ] Codex 実行開始後に Todo へ放置された delegate 済み Issue がない\n- [ ] Codex 完了タスクに task / PR / commit リンク・検証・残リスクが記録されている\n- [ ] 人間ゲート Issue が人間確認なしで Done になっていない\n- [ ] Project description の Next AI Tasks に Done / Canceled の Issue が含まれない\n- [ ] ブロック中の Codex 候補が Ready として表示されていない\n- [ ] 依存する設計 Issue（`agent:claude-design` / `agent:claude-review`）が未完了（not Done）のまま、その下流 implementation Issue に Codex 実行許可（§2.1 の許可コメント / delegate）が出ていない\n\n### Design / Implementation spec-first checks（設計 §2 / §7.1 の spec-first 分業の担保）\n\n- [ ] `agent:codex-impl` のフィーチャー（`kind:feature`。Phase 4 完了までは旧 `Feature` / `enhancement` も対象）が、対応する `docs/*-spec.md` 節（または roadmap の該当マイルストーン節）で難所（payload / schema・境界値・アルゴリズム・責務境界）を確定する前に In Progress 以降へ入っていないか（In Progress 済みの課題も対象）\n- [ ] 専用 `agent:claude-design` 課題を持たないフィーチャーでも、tracking / 比較レポート / roadmap 節 / `docs/*-spec.md` のいずれかで難所が上流確定され、実装課題からアンカー参照されているか\n- [ ] 波（wave）分割されたフィーチャーで、先行波の spec だけが書かれ後続波が未確定のまま実装着手していないか（just-in-time spec が波ごとに守られているか）\n\n## 運用\n\n* 週次で本課題にコメントとして監査結果を記録する（課題自体は開いたままにする）。\n* Linear のルーティングのみを点検する。GitHub docs が正典。",
+      "priority": 4,
+      "url": "https://linear.app/dolquis/issue/DEV-67/recurring-linear-control-tower-audit-ai-photo-viewer",
+      "branchName": "dolquis/dev-67-recurring-linear-control-tower-audit-ai-photo-viewer",
+      "createdAt": "2026-06-03T03:45:42.188Z",
+      "updatedAt": "2026-07-05T10:32:06.232Z",
+      "archivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "canceledAt": null,
+      "state": {
+        "name": "Backlog",
+        "type": "backlog"
+      },
+      "labels": {
+        "nodes": [
+          {
+            "name": "area:docs"
+          },
+          {
+            "name": "repo:ai-photo-viewer"
+          },
+          {
+            "name": "type:review"
+          },
+          {
+            "name": "agent:claude-review"
+          }
+        ]
+      },
+      "parent": null,
+      "project": {
+        "name": "AI Photo Viewer Local AI Photo MVP"
+      },
+      "projectMilestone": null,
+      "assignee": null
+    }
+  ]
+}
