@@ -4,11 +4,21 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同一 PR / ブランチの旧 run を打ち切る。main への push は打ち切らない。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-test:
     name: build & test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -26,17 +36,10 @@ jobs:
       - name: Test
         run: dotnet test AiPhotoViewer.sln --configuration Release --no-build --verbosity normal
 
-  format:
-    name: format check (informational)
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Verify formatting
+      # 旧 format ジョブの統合。step レベルの continue-on-error なので、
+      # フォーマット差分があってもジョブ（チェック）は緑のまま informational に
+      # 留まる（job レベルだとチェックが赤く表示される）。checkout + .NET
+      # セットアップの重複と 2 本目のランナー起動をなくす。
+      - name: Verify formatting (informational)
+        continue-on-error: true
         run: dotnet format AiPhotoViewer.sln --verify-no-changes
