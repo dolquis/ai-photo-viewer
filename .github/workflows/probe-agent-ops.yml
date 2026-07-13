@@ -1,0 +1,27 @@
+name: Probe agent-ops reusable (verification)
+
+# Phase 4 検証用（一時的）。public リポジトリ（ai-photo-viewer）から private
+# リポジトリ（agent-ops）の reusable workflow を cross-repo で呼べるかを確認する。
+# agent-ops の reusable-ci-probe.yml を SHA 固定で参照する（スラッシュ付きブランチ名の
+# ref 曖昧さを避けるため）。
+#
+# この run が成功 → public → private の cross-repo 呼び出しが可能（agent-ops の
+#   Actions Access 設定が有効）。以後、共通 reusable workflow を全リポジトリで直参照できる。
+# この run が not-found / access エラー → 設定未有効か public→private 不可。
+#   後者なら public リポジトリは vendoring 配布に切替。
+#
+# 検証確定後、この workflow は削除する（本 PR はマージしない想定の検証 PR）。
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/probe-agent-ops.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  call-crossrepo:
+    uses: dolquis/agent-ops/.github/workflows/reusable-ci-probe.yml@a9365669a8d34241c7d925430bc61a65492b6bc8
+    with:
+      note: "cross-repo call from PUBLIC ai-photo-viewer"
