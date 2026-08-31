@@ -32,7 +32,7 @@
 - **PR は Issue にひも付ける**。本文に Linear のマジックワードを入れる:
   - 完了で Issue を閉じる場合: `Fixes DEV-42`
   - 関連のみ: `Part of DEV-40` / `Refs DEV-41`
-- **状態運用**: 着手で `In Progress`、PR 作成で `In Review`、**PR マージは `In Review` で止め（自動 `Done` にしない）**、`Done` は検証メモ記載後に明示遷移する（`docs/linear-conventions.md` §7.1.3）。`type:tracking`（傘 Issue）は直接の実装対象にしない。
+- **状態運用**: 着手で `In Progress`、PR 作成で `In Review`、**PR マージで `Merged` へ（自動 `Done` にしない。`Merged` 状態が未整備の間は `In Review` で代用）**、`Done` は検証メモ記載後に明示遷移する（`docs/linear-conventions.md` §7.1.3）。人間ゲート課題は `In Review` / `Merged` に置かず `Todo` で待機、`type:tracking`（傘 Issue）は直接の実装対象にせず子完了まで `In Progress`（同 §3.1）。
 - `type:human-gate` / `gate:human-required` が付いた Issue は、**人間の確認（デバイス検証・署名・UI レビュー等）を経るまで Done にしない**。
 - **Codex 実行ポリシー**: `agent:codex-*` は候補（ルーティング）ラベルで Codex 実行許可ではない。Codex Cloud の起動（assign / delegate / mention）は人間の明示許可があるときのみで、Claude は行わない。正典は [`docs/linear-conventions.md`](./docs/linear-conventions.md) §2.1。
 
