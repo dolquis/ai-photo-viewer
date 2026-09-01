@@ -33,7 +33,7 @@
   - 完了で Issue を閉じる場合: `Fixes DEV-42`
   - 関連のみ: `Part of DEV-40` / `Refs DEV-41`
 - **状態運用**: 着手で `In Progress`、PR 作成で `In Review`、**PR マージで `Merged` へ（自動 `Done` にしない。`Merged` 状態が未整備の間は `In Review` で代用）**、`Done` は検証メモ記載後に明示遷移する（`docs/linear-conventions.md` §7.1.3）。人間ゲート課題は `In Review` / `Merged` に置かず `Todo` で待機、`type:tracking`（傘 Issue）は直接の実装対象にせず子完了まで `In Progress`（同 §3.1）。
-- **記録の鮮度**: Done / Canceled へ遷移させたセッションは、同じセッションで親 tracking と Project の `## Next AI Tasks` も更新する。description には Linear の状態から導出できる記述（状態名・残件数・「〜待ち」）を書かない（同 §7.2）。
+- **記録の鮮度**: description には Linear の状態から導出できる記述（状態名・残件数・「〜待ち」）を書かない。状態依存の記録（Current focus / Next AI Tasks / Next checkpoint）は日付つきの器へ置く。Project は **Project Status Update**（14 日に 1 本以上、3 節そろえる）に置く。tracking Issue は `Status snapshot YYYY-MM-DD` 見出しのコメントに置く（同 §7.2 / §12）。
 - `type:human-gate` / `gate:human-required` が付いた Issue は、**人間の確認（デバイス検証・署名・UI レビュー等）を経るまで Done にしない**。
 - **Codex 実行ポリシー**: `agent:codex-*` は候補（ルーティング）ラベルで Codex 実行許可ではない。Codex Cloud の起動（assign / delegate / mention）は人間の明示許可があるときのみで、Claude は行わない。正典は [`docs/linear-conventions.md`](./docs/linear-conventions.md) §2.1。
 
