@@ -1,0 +1,11 @@
+{
+  "status": {
+    "AGENTS.md": 1,
+    "README.md": 3,
+    "docs/di-composition.md": 5,
+    "docs/library-selection.md": 3,
+    "docs/p0-split-plan.md": 2,
+    "docs/poc-tasks.md": 1,
+    "docs/windows-optimization.md": 2
+  }
+}
