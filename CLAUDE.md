@@ -12,6 +12,8 @@
 - モデル本体・DB・キャッシュ・ログは commit しない。
 - `dolquis/agent-ops` からベンダリングした共有スキルの本文・`references/` は origin のコピー。
   この repo で直接編集しない（`AGENTS.md` §9）。
+- repo docs は「定義」だけを持ち、状態語・進捗表を書かない（`AGENTS.md` §10）。docs を
+  変更したら `python3 scripts/docs-lint.py --baseline .docs-lint-baseline.json` を実行する。
 
 ## アドバイザー（Fable）への相談
 

@@ -1,3 +1,4 @@
+<!-- lint:allow-file heading-state,status,line-ref -->
 # プロジェクト凍結ログ（AI Photo Viewer）
 
 本書は、Linear 上の本プロジェクト Issue を一時凍結・解凍した記録である。
