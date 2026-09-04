@@ -43,3 +43,8 @@ jobs:
       - name: Verify formatting (informational)
         continue-on-error: true
         run: dotnet format AiPhotoViewer.sln --verify-no-changes
+
+      # docs-lint（dolquis/agent-ops origin のベンダリングコピー）。既存の findings は
+      # .docs-lint-baseline.json で凍結し、増加だけを止める。
+      - name: docs-lint (baseline ratchet)
+        run: python3 scripts/docs-lint.py --baseline .docs-lint-baseline.json

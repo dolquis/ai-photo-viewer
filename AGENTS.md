@@ -51,6 +51,11 @@ dotnet format AiPhotoViewer.sln         # 提出前に整形（CI でも検査�
 ```
 
 PR を出す前にローカルで build / test が通ることを確認する。CI（`.github/workflows/ci.yml`）が同じ検査を行う。
+`README.md` / `AGENTS.md` / `CLAUDE.md` / `docs/` を変更した場合は、あわせて docs-lint を実行する（§10）。
+
+```sh
+python3 scripts/docs-lint.py --baseline .docs-lint-baseline.json
+```
 
 ---
 
@@ -117,6 +122,46 @@ Phase 0 の PoC は **使い捨て前提**で、本実装（`src/`）とは分�
 - ローカル DB / キャッシュ / ログ（`*.db`, `thumbnails/`, `*.log`）を commit しない。
 - `Core` から他層を参照する依存を足さない。
 - MVP（Phase 1〜4）のスコープに後続フェーズの機能を混ぜない。
+
+## 10. ドキュメントの正典分離
+
+repo docs は「定義」を持ち、「状態」は持たない。状態・進捗・優先度の正典は Linear である。
+
+| 情報種別 | 正典 |
+|---|---|
+| 状態・進捗・優先度・担当 | **Linear** |
+| 課題トラッキング | **Linear**（GitHub Issues は mirror） |
+| ラベル・状態ライフサイクル・エージェント規約 | [`docs/linear-conventions.md`](./docs/linear-conventions.md) |
+| Phase 定義・スコープ・依存関係の「定義」 | [`docs/roadmap.md`](./docs/roadmap.md)（達成状態は持たない） |
+| 機能仕様 | [`docs/mvp-spec.md`](./docs/mvp-spec.md) |
+| レイヤ依存規約・責務境界 | [`docs/architecture.md`](./docs/architecture.md) |
+| 技術選定の判断と根拠 | `docs/tech-selection.md` / `docs/library-selection.md` |
+| ビルド・テスト手順 | 本ファイル §3 |
+
+次の書き方をしない。
+
+- **見出しで状態を主張しない**。地の文は日付を伴えば記録として読まれるが、見出しは骨格で
+  拾い読みの対象であり、日付を添える余地がない。`✅ 完了` `（未着手）` はどちらも書かない。
+- **状態語**を地の文に書かない。Linear から導出できるものは定義文へ言い換える。語彙は
+  `python3 scripts/docs-lint.py --print-words` で得る（どこにも書き写さない）。
+- **進捗表・課題一覧**を README / `docs/` / Issue / PR 本文に作らない。トラッカーは Linear だけである。
+- **行番号・実測件数**をコード参照に書かない。ファイル名・型名・関数名までに留める。行番号は
+  リファクタで即座に陳腐化する。
+- ある文書が別の文書を「正典」と宣言したら、参照される側にも「本節は X から参照される」の
+  1 行を置く。片方向の宣言は参照先の変更に追随しない。
+- 更新しない前提のスナップショット文書をそのまま残さない。`docs/archive/` へ移すか、先頭に
+  `<!-- lint:allow-file heading-state,status -->` を置いて記録であることを宣言する。
+
+検査は `python3 scripts/docs-lint.py`。`scripts/docs-lint.py` は `dolquis/agent-ops` を origin と
+するベンダリングコピーで、**この repo で編集しない**（変更は origin で行い配布し直す）。手順は
+`doc-governance` スキルにある。既存の HEURISTIC 指摘は `.docs-lint-baseline.json` で凍結して
+あり、CI とセルフレビューでは増加だけを止める。
+
+```bash
+python3 scripts/docs-lint.py --baseline .docs-lint-baseline.json
+```
+
+---
 
 ## 日本語技術文書の執筆・推敲
 

@@ -10,6 +10,8 @@
 - `Core` は他層を参照しない。UI と推論はインターフェースで疎結合に保つ。
 - Phase 0 の PoC は使い捨てとして `poc/` 配下に置く（`poc/README.md`）。
 - モデル本体・DB・キャッシュ・ログは commit しない。
+- repo docs は「定義」だけを持ち、状態語・進捗表を書かない（`AGENTS.md` §10）。docs を
+  変更したら `python3 scripts/docs-lint.py --baseline .docs-lint-baseline.json` を実行する。
 
 ## アドバイザー（Fable）への相談
 
