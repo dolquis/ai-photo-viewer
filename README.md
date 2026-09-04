@@ -1,3 +1,12 @@
+> [!IMPORTANT]
+> **このリポジトリは開発を中止しました（2026-09-04）。アーカイブののち削除します。**
+>
+> - Linear Project: [AI Photo Viewer Local AI Photo MVP](https://linear.app/dolquis/project/ai-photo-viewer-local-ai-photo-mvp-575ebeafac1e)（Canceled）
+> - 設計文書・Linear の記録の退避先: `dolquis/agent-ops` の [`docs/archive/ai-photo-viewer/`](https://github.com/dolquis/agent-ops/tree/main/docs/archive/ai-photo-viewer)
+> - 削除予定: アーカイブから 30 日後
+>
+> 以下の記述は中止時点のもので、更新しません。
+
 # ai-photo-viewer
 
 オンデバイス AI 写真ビューワー／整理アプリ（Windows ファースト、クロスプラットフォーム核）。
@@ -8,8 +17,8 @@
 
 ## ステータス
 
-設計フェーズ。設計ドキュメントと .NET ソリューション雛形を整備済み。
-実装は `docs/roadmap.md` の Phase 0（技術検証）から着手する。
+開発中止。中止時点では設計ドキュメントと .NET ソリューション雛形までで、
+`docs/roadmap.md` の Phase 0（技術検証）には着手していない。
 
 ## 開発フロー（Linear 連携）
 
