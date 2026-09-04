@@ -108,8 +108,10 @@ Phase 0 の PoC は **使い捨て前提**で、本実装（`src/`）とは分�
 
 - **コミットメッセージは日本語**、命令形・要点先頭（既存履歴に合わせる）。
 - 1 Issue = 1 つの焦点を絞った PR（`type:implementation` の方針）。
-- PR は最初 **ドラフト** で作成し、本文に対象 Issue（`DEV-xx`）を必ず記載。
+- PR は最初 **ドラフト** で作成し、本文に対象 Issue（`DEV-xx`）を必ず記載。新規 PR の作成には
+  `create-draft-pr` スキルを使う。
 - PR テンプレート（`.github/pull_request_template.md`）のチェックリストを満たす。
+- push / PR 作成・更新の前に `pre-pr-self-review` スキルの手順でセルフレビューする。
 
 ## 9. やってはいけないこと
 
@@ -117,6 +119,10 @@ Phase 0 の PoC は **使い捨て前提**で、本実装（`src/`）とは分�
 - ローカル DB / キャッシュ / ログ（`*.db`, `thumbnails/`, `*.log`）を commit しない。
 - `Core` から他層を参照する依存を足さない。
 - MVP（Phase 1〜4）のスコープに後続フェーズの機能を混ぜない。
+- `.claude/skills/` / `.agents/skills/` の**共有スキル本文と `references/`** を直接編集しない。
+  origin は `dolquis/agent-ops`（対象は同 repo の `scripts/shared-skills.txt` が定める）。
+  改訂は origin 側で行い、`scripts/vendor-shared-skills.sh --force --skill <name> <この repo>`
+  で両ツリーへ再配布する。乖離の検出には同スクリプトの `--check` を使う。
 
 ## 日本語技術文書の執筆・推敲
 

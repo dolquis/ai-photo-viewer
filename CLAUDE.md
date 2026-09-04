@@ -10,6 +10,8 @@
 - `Core` は他層を参照しない。UI と推論はインターフェースで疎結合に保つ。
 - Phase 0 の PoC は使い捨てとして `poc/` 配下に置く（`poc/README.md`）。
 - モデル本体・DB・キャッシュ・ログは commit しない。
+- `dolquis/agent-ops` からベンダリングした共有スキルの本文・`references/` は origin のコピー。
+  この repo で直接編集しない（`AGENTS.md` §9）。
 
 ## アドバイザー（Fable）への相談
 
